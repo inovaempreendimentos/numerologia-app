@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Numerologia — Descubra seus números</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#150f1a; --bg-soft:#1c1522; --card:#231a2b; --card-border:#332740;
+    --text:#f4efe8; --text-dim:#b8abc4; --accent:#d4af6a; --accent2:#8f6fd1;
+  }
+  html{ color-scheme: dark; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{ background-color:var(--bg); color:var(--text); font-family:'Sora',sans-serif; min-height:100vh; overflow-x:hidden; }
+  body{ display:flex; align-items:center; justify-content:center; min-height:100vh;
+    padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    background: radial-gradient(circle at 20% 10%, rgba(212,175,106,0.08), transparent 45%),
+                radial-gradient(circle at 85% 80%, rgba(143,111,209,0.10), transparent 45%),
+                var(--bg);
+  }
+  .app{ width:100%; max-width:580px; }
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:500; letter-spacing:-0.01em; }
+  .screen{ display:none; animation: fadeUp .5s ease both; }
+  .screen.active{ display:block; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+
+  .hero{ text-align:center; }
+  .eyebrow{ font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:18px; font-weight:700; }
+  .hero h1{ font-size:clamp(28px,6vw,38px); line-height:1.18; margin-bottom:14px; }
+  .hero h1 em{ font-style:italic; color:var(--accent2); }
+  .hero p{ color:var(--text-dim); font-size:15px; line-height:1.65; max-width:440px; margin:0 auto 30px; }
+
+  .field{ width:100%; margin-bottom:14px; padding:15px 16px; border-radius:12px; border:1px solid var(--card-border);
+    background:var(--bg-soft); color:var(--text); font-family:'Sora',sans-serif; font-size:16px; -webkit-tap-highlight-color:transparent; }
+  .field:focus{ outline:none; border-color:var(--accent); }
+  .field-label{ font-size:11.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); font-weight:700; margin-bottom:6px; display:block; }
+
+  button.primary{ background:linear-gradient(100deg, var(--accent), #e8cd94); color:#241a0a; border:none; font-family:'Sora',sans-serif;
+    font-weight:800; font-size:15px; padding:15px 32px; border-radius:100px; cursor:pointer; width:100%; max-width:360px;
+    transition:transform .15s ease, opacity .15s ease; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  button.primary:hover{ transform:translateY(-2px); }
+  button.primary:active{ transform:scale(0.96); opacity:0.85; }
+  button.primary:disabled{ opacity:0.5; }
+  button.ghost{ background:transparent; border:1px solid var(--card-border); color:var(--text); font-family:'Sora',sans-serif; font-weight:600;
+    font-size:13.5px; padding:13px 22px; border-radius:100px; cursor:pointer; transition:border-color .15s ease, transform .1s ease;
+    -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+  button.ghost:hover{ border-color:var(--accent); }
+  button.ghost:active{ transform:scale(0.96); }
+  .btn-row{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:22px; }
+  .form-card{ max-width:420px; margin:0 auto; text-align:left; }
+
+  .center{ text-align:center; }
+  .back-link{ display:inline-block; margin-top:18px; font-size:12px; color:var(--text-dim); cursor:pointer; background:none; border:none; font-family:'Sora',sans-serif; }
+  .back-link:hover{ color:var(--text); }
+
+  /* ---- Resultado ---- */
+  .numbers-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
+  .number-card{ background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:18px 16px; text-align:center; }
+  .number-card .num{ font-family:'Fraunces',serif; font-size:38px; font-weight:700; color:var(--accent); line-height:1; margin-bottom:6px; }
+  .number-card .label{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-dim); font-weight:700; }
+
+  .interp-card{ background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:20px 20px; margin-bottom:14px; text-align:left; }
+  .interp-card .ihead{ display:flex; align-items:baseline; gap:10px; margin-bottom:10px; }
+  .interp-card .inum{ font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--accent); }
+  .interp-card .ititle{ font-size:13px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-dim); font-weight:700; }
+  .interp-card p{ font-size:14.5px; line-height:1.65; color:#ded7e6; }
+
+  .overview-card{ background:linear-gradient(160deg, rgba(212,175,106,0.12), rgba(143,111,209,0.12)), var(--card);
+    border:1px solid var(--accent); border-radius:18px; padding:22px 22px; margin-bottom:20px; text-align:left; }
+  .overview-card .oveyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--accent); font-weight:700; margin-bottom:10px; }
+  .overview-card p{ font-family:'Fraunces',serif; font-size:16.5px; line-height:1.6; font-style:italic; color:var(--text); }
+
+  .traits-wrap{ margin-top:18px; }
+  .trait-block{ border-radius:14px; padding:16px 16px; margin-bottom:10px; }
+  .trait-block.onpoint{ background:rgba(107,203,119,0.08); border:1px solid rgba(107,203,119,0.3); }
+  .trait-block.toomuch{ background:rgba(224,138,138,0.08); border:1px solid rgba(224,138,138,0.3); }
+  .trait-block.notenough{ background:rgba(143,111,209,0.08); border:1px solid rgba(143,111,209,0.3); }
+  .trait-block h4{ font-family:'Sora',sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; font-weight:800; margin-bottom:10px; }
+  .trait-block.onpoint h4{ color:#6bcb77; }
+  .trait-block.toomuch h4{ color:#e08a8a; }
+  .trait-block.notenough h4{ color:#8f6fd1; }
+  .trait-item{ font-size:13px; line-height:1.5; margin-bottom:8px; color:#ded7e6; }
+  .trait-item:last-child{ margin-bottom:0; }
+  .trait-item b{ color:var(--text); font-weight:700; }
+
+  /* ---- Captura de lead inline ---- */
+  .lead-card{ background:linear-gradient(160deg, rgba(212,175,106,0.08), rgba(143,111,209,0.08)), var(--card);
+    border:1px solid var(--card-border); border-radius:18px; padding:22px 20px; margin:22px 0; text-align:left; }
+  .lead-card h3{ font-size:17px; margin-bottom:8px; }
+  .lead-card p{ font-size:13.5px; color:var(--text-dim); line-height:1.55; margin-bottom:16px; }
+
+  /* ---- Compatibilidade ---- */
+  .compat-card{ background:var(--card); border:1px solid var(--card-border); border-radius:18px; padding:24px 22px; text-align:center; margin-bottom:16px; }
+  .compat-names{ display:flex; align-items:center; justify-content:center; gap:14px; margin-bottom:18px; }
+  .compat-badge{ width:56px; height:56px; border-radius:50%; background:var(--bg-soft); border:1px solid var(--card-border);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--accent); }
+  .compat-heart{ font-size:20px; color:var(--accent2); }
+  .compat-score{ font-family:'Fraunces',serif; font-size:15px; color:var(--accent2); font-weight:700; margin-bottom:10px; text-transform:uppercase; letter-spacing:0.04em; }
+
+  /* ---- Dashboard / número do dia ---- */
+  .day-orb{ width:130px; height:130px; margin:0 auto 20px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, rgba(212,175,106,0.9), rgba(143,111,209,0.5) 70%);
+    box-shadow:0 0 50px rgba(212,175,106,0.3); font-family:'Fraunces',serif; font-size:46px; font-weight:700; color:#1a1220; }
+  .dash-label{ font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.1em; font-weight:700; margin-bottom:6px; }
+
+  /* ---- Cartão compartilhável ---- */
+  .share-card{ background:linear-gradient(165deg, #241a2e, #1a1220); border:1px solid var(--card-border); border-radius:20px;
+    padding:32px 24px; text-align:center; margin-bottom:18px; }
+  .share-card .snum{ font-family:'Fraunces',serif; font-size:64px; font-weight:700; color:var(--accent); line-height:1; margin-bottom:10px; }
+  .share-card .sname{ font-size:15px; color:var(--text-dim); margin-bottom:4px; }
+  .share-card .stag{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent2); font-weight:700; margin-top:14px; }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HERO -->
+  <section class="screen active" id="screen-hero">
+    <div class="hero">
+      <div class="eyebrow">Numerologia Pitagórica</div>
+      <h1>Os números já sabiam <em>quem você é</em>, antes de você perguntar.</h1>
+      <p>Descubra seus 4 números centrais, veja se combina com alguém, e receba seu número do dia — de graça, em menos de 1 minuto.</p>
+      <button class="primary" onclick="goTo('screen-capture')">Descobrir meus números</button>
+      <div style="margin-top:18px;"><button class="back-link" onclick="goToProArea()">É numerólogo(a) profissional? Clique aqui →</button></div>
+    </div>
+  </section>
+
+  <!-- PAINEL DO NUMERÓLOGO: LANDING -->
+  <section class="screen" id="screen-pro-landing">
+    <div class="hero">
+      <div class="eyebrow">Painel Profissional</div>
+      <h1>Gere mapas numerológicos completos pros seus clientes.</h1>
+      <p>Todos os números centrais, mais Lição Cármica, Realização, Desejo Oculto, Momentos Decisivos e Desafios — o mapa clínico completo, pronto pra você entregar.</p>
+    </div>
+    <div class="form-card" style="max-width:460px;">
+      <div class="interp-card" style="margin-bottom:12px;">
+        <div class="ihead"><span class="ititle">Básico — R$ 29,90/mês</span></div>
+        <p style="margin-bottom:14px;">Até 10 mapas por mês, sem marca própria no relatório.</p>
+        <button class="primary" style="width:100%;" onclick="subscribePro('basico')">Assinar Básico</button>
+      </div>
+      <div class="interp-card" style="border-color:var(--accent);">
+        <div class="ihead"><span class="ititle" style="color:var(--accent);">Pro — R$ 59,90/mês</span></div>
+        <p style="margin-bottom:14px;">Mapas ilimitados, com sua marca no topo de cada relatório.</p>
+        <button class="primary" style="width:100%;" onclick="subscribePro('pro')">Assinar Pro</button>
+      </div>
+    </div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-hero')">← Voltar</button></div>
+  </section>
+
+  <!-- PAINEL DO NUMERÓLOGO: GERADOR -->
+  <section class="screen" id="screen-pro-generator">
+    <div class="center">
+      <div class="eyebrow" id="pro-plan-label">Painel Profissional</div>
+      <h1 style="margin-bottom:20px;">Gerar mapa de um cliente</h1>
+    </div>
+    <div class="form-card">
+      <span class="field-label">Nome completo do cliente</span>
+      <input type="text" id="pro-input-nome" class="field" placeholder="Nome completo de nascimento">
+      <span class="field-label">Data de nascimento</span>
+      <input type="date" id="pro-input-data" class="field">
+      <div id="pro-brand-row" style="display:none;">
+        <span class="field-label">Sua marca (aparece no topo do relatório)</span>
+        <input type="text" id="pro-brand-name" class="field" placeholder="Ex: Ateliê de Numerologia da Ana">
+      </div>
+      <div class="btn-row"><button class="primary" id="pro-generate-btn" onclick="generateProMap()">Gerar mapa completo</button></div>
+    </div>
+    <div id="pro-usage-note" style="text-align:center; color:var(--text-dim); font-size:12px; margin-top:14px;"></div>
+    <div id="pro-map-output"></div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-hero')">← Voltar</button></div>
+  </section>
+
+  <!-- CAPTURA -->
+  <section class="screen" id="screen-capture">
+    <div class="hero">
+      <div class="eyebrow" id="capture-eyebrow">Seus dados</div>
+      <h1 id="capture-title">Como você se chama, e quando nasceu?</h1>
+      <p id="capture-sub">Usamos seu nome completo de registro e sua data de nascimento — nada mais.</p>
+    </div>
+    <div class="form-card">
+      <span class="field-label">Nome completo</span>
+      <input type="text" id="input-nome" class="field" placeholder="Seu nome completo de nascimento">
+      <span class="field-label">Data de nascimento</span>
+      <input type="date" id="input-data" class="field">
+      <div class="btn-row"><button class="primary" id="capture-btn" onclick="submitCapture()">Continuar</button></div>
+    </div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-hero')">← Voltar</button></div>
+  </section>
+
+  <!-- CAPTURA DE CONTATO (antes do resultado) -->
+  <section class="screen" id="screen-lead-gate">
+    <div class="hero">
+      <div class="eyebrow">Quase lá</div>
+      <h1 style="margin-bottom:14px;">Pra onde a gente manda seu mapa?</h1>
+      <p>Deixa seu e-mail e WhatsApp pra desbloquear seus números agora, e ficar por dentro de novidades do app.</p>
+    </div>
+    <div class="form-card">
+      <input type="email" id="lead-email" class="field" placeholder="Seu melhor e-mail">
+      <input type="tel" id="lead-whatsapp" class="field" placeholder="Seu WhatsApp (com DDD)">
+      <div class="btn-row"><button class="primary" id="lead-btn" onclick="submitLead()">Ver meus números</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTADO -->
+  <section class="screen" id="screen-result">
+    <div class="center">
+      <div class="eyebrow">Seu mapa numerológico</div>
+      <h1 id="result-name" style="margin-bottom:18px;"></h1>
+    </div>
+    <div class="overview-card" id="overview-card"></div>
+    <div class="numbers-grid" id="numbers-grid"></div>
+    <div id="interp-list"></div>
+
+    <div class="btn-row">
+      <button class="ghost" onclick="renderCycles(); goTo('screen-cycles')">🌀 Meus Ciclos de Vida</button>
+      <button class="ghost" onclick="goToCompatInvite()">💞 Ver compatibilidade com alguém</button>
+      <button class="ghost" onclick="goTo('screen-share')">📤 Meu cartão pra compartilhar</button>
+    </div>
+  </section>
+
+  <!-- CICLOS DE VIDA -->
+  <section class="screen" id="screen-cycles">
+    <div class="center">
+      <div class="eyebrow">Ciclos de Vida</div>
+      <h1 style="margin-bottom:8px;">As 3 fases da sua jornada.</h1>
+      <p style="color:var(--text-dim); font-size:14px; margin-bottom:26px;">Cada fase da vida tem um número e um tema próprios — o que fazia sentido aos 20 pode não ser o mesmo aos 50.</p>
+    </div>
+    <div id="cycles-list"></div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-result')">← Voltar pro resultado</button></div>
+  </section>
+
+  <!-- CARTÃO COMPARTILHÁVEL -->
+  <section class="screen" id="screen-share">
+    <div class="center">
+      <div class="eyebrow">Compartilhar</div>
+      <h1 style="margin-bottom:22px;">Seu cartão está pronto.</h1>
+    </div>
+    <div class="share-card">
+      <div class="snum" id="share-num"></div>
+      <div class="sname">é o Número do Caminho de Vida de</div>
+      <div class="sname" id="share-name" style="color:var(--text); font-weight:600;"></div>
+      <div class="stag">numerologia · descubra o seu</div>
+    </div>
+    <p class="center" style="color:var(--text-dim); font-size:13px; margin-bottom:20px;">Print da tela e posta nos Stories, ou copia o link abaixo.</p>
+    <div class="btn-row">
+      <button class="primary" onclick="copyShareLink()" style="max-width:280px;">Copiar meu link</button>
+    </div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-result')">← Voltar pro resultado</button></div>
+  </section>
+
+  <!-- CONVITE DE COMPATIBILIDADE -->
+  <section class="screen" id="screen-compat-invite">
+    <div class="center">
+      <div class="eyebrow">Compatibilidade</div>
+      <h1 style="margin-bottom:14px;">Manda esse link pra pessoa.</h1>
+      <p style="color:var(--text-dim); font-size:14px; margin-bottom:24px;">Quando ela também descobrir os números dela, vocês veem a compatibilidade entre os dois.</p>
+    </div>
+    <div class="form-card">
+      <input type="text" id="compat-link-display" class="field" readonly>
+      <div class="btn-row"><button class="primary" onclick="copyCompatLink()">Copiar link do convite</button></div>
+    </div>
+    <div class="center"><button class="back-link" onclick="goTo('screen-result')">← Voltar</button></div>
+  </section>
+
+  <!-- SEGUNDA PESSOA RESPONDE O CONVITE -->
+  <section class="screen" id="screen-compat-second">
+    <div class="hero">
+      <div class="eyebrow">Convite de compatibilidade</div>
+      <h1 id="compat-second-title">Alguém quer saber se combina com você.</h1>
+      <p>Descubra seu número e veja a compatibilidade entre vocês.</p>
+    </div>
+    <div class="form-card">
+      <span class="field-label">Seu nome completo</span>
+      <input type="text" id="compat-nome" class="field" placeholder="Seu nome completo de nascimento">
+      <span class="field-label">Sua data de nascimento</span>
+      <input type="date" id="compat-data" class="field">
+      <div class="btn-row"><button class="primary" onclick="submitCompatSecond()">Ver compatibilidade</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTADO DE COMPATIBILIDADE -->
+  <section class="screen" id="screen-compat-result">
+    <div class="center">
+      <div class="eyebrow">Resultado</div>
+      <h1 style="margin-bottom:22px;">Como vocês combinam</h1>
+    </div>
+    <div class="compat-card">
+      <div class="compat-names">
+        <div class="compat-badge" id="compat-num-a"></div>
+        <span class="compat-heart">✦</span>
+        <div class="compat-badge" id="compat-num-b"></div>
+      </div>
+      <div class="compat-score" id="compat-score"></div>
+      <p id="compat-text" style="font-size:14.5px; line-height:1.65; color:#ded7e6; text-align:left;"></p>
+    </div>
+    <div class="btn-row"><button class="primary" onclick="goTo('screen-capture')" style="max-width:280px;">Descobrir meus próprios números</button></div>
+  </section>
+
+  <!-- DASHBOARD / NÚMERO DO DIA -->
+  <section class="screen" id="screen-dashboard">
+    <div class="center">
+      <div class="dash-label">Hoje</div>
+      <div class="day-orb" id="day-orb"></div>
+      <h1 id="dash-title" style="margin-bottom:10px;"></h1>
+      <p id="dash-text" style="color:var(--text-dim); font-size:14.5px; line-height:1.6; max-width:440px; margin:0 auto 30px;"></p>
+      <button class="ghost" onclick="goTo('screen-result')">Ver meu mapa completo</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ================= MOTOR DE CÁLCULO ================= */
+const LETTER_MAP = {
+  A:1,J:1,S:1, B:2,K:2,T:2, C:3,L:3,U:3, D:4,M:4,V:4,
+  E:5,N:5,W:5, F:6,O:6,X:6, G:7,P:7,Y:7, H:8,Q:8,Z:8, I:9,R:9
+};
+const VOWELS = ['A','E','I','O','U'];
+const MASTER_NUMBERS = [11,22,33];
+
+function normalizeLetters(str){
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z]/g,'');
+}
+function reduceNumber(n){
+  while(n > 9 && !MASTER_NUMBERS.includes(n)){
+    n = String(n).split('').reduce((a,d)=>a+parseInt(d,10),0);
+  }
+  return n;
+}
+function sumLetters(letters){
+  return letters.split('').reduce((sum,ch)=> sum + (LETTER_MAP[ch]||0), 0);
+}
+
+function calcLifePath(dateStr){
+  const [y,m,d] = dateStr.split('-').map(s=>parseInt(s,10));
+  const rd = reduceNumber(d);
+  const rm = reduceNumber(m);
+  const ry = reduceNumber(String(y).split('').reduce((a,dg)=>a+parseInt(dg,10),0));
+  return reduceNumber(rd + rm + ry);
+}
+function calcDestiny(nome){
+  const letters = normalizeLetters(nome);
+  return reduceNumber(sumLetters(letters));
+}
+function calcSoul(nome){
+  const letters = normalizeLetters(nome).split('').filter(ch=>VOWELS.includes(ch)).join('');
+  return reduceNumber(sumLetters(letters));
+}
+function calcPersonality(nome){
+  const letters = normalizeLetters(nome).split('').filter(ch=>!VOWELS.includes(ch)).join('');
+  return reduceNumber(sumLetters(letters));
+}
+function calcPersonalYear(dateStr, refDate){
+  const [_,m,d] = dateStr.split('-').map(s=>parseInt(s,10));
+  const rd = reduceNumber(d);
+  const rm = reduceNumber(m);
+  const ry = reduceNumber(String(refDate.getFullYear()).split('').reduce((a,dg)=>a+parseInt(dg,10),0));
+  return reduceNumber(rd + rm + ry);
+}
+function calcPersonalDay(personalYear, refDate){
+  const rm = reduceNumber(refDate.getMonth()+1);
+  const rd = reduceNumber(refDate.getDate());
+  return reduceNumber(personalYear + rm + rd);
+}
+
+function reduceToSingleDigit(n){
+  while(n > 9){ n = String(n).split('').reduce((a,d)=>a+parseInt(d,10),0); }
+  return n;
+}
+function calcCycles(dateStr, lifePathNumber){
+  const [y,m,d] = dateStr.split('-').map(s=>parseInt(s,10));
+  const cycle1 = reduceNumber(m);
+  const cycle2 = reduceNumber(d);
+  const cycle3 = reduceNumber(String(y).split('').reduce((a,dg)=>a+parseInt(dg,10),0));
+  const firstEnd = 36 - reduceToSingleDigit(lifePathNumber);
+  const secondEnd = firstEnd + 27;
+  return { cycle1, cycle2, cycle3, firstEnd, secondEnd };
+}
+
+/* ---- Cálculos avançados (exclusivos do painel profissional) ---- */
+function calcKarmicLessons(nome){
+  const letters = normalizeLetters(nome);
+  const present = new Set(letters.split('').map(ch=>LETTER_MAP[ch]));
+  const missing = [];
+  for(let n=1;n<=9;n++){ if(!present.has(n)) missing.push(n); }
+  return missing;
+}
+function calcRealizacao(life, destiny){
+  return reduceNumber(life + destiny);
+}
+function calcDesejoOculto(nome){
+  const letters = normalizeLetters(nome);
+  const counts = {};
+  letters.split('').forEach(ch=>{
+    const n = LETTER_MAP[ch];
+    counts[n] = (counts[n]||0) + 1;
+  });
+  let top = 1, max = 0;
+  Object.keys(counts).forEach(n=>{
+    if(counts[n] > max){ max = counts[n]; top = parseInt(n,10); }
+  });
+  return top;
+}
+function calcDesafios(dateStr){
+  const [y,m,d] = dateStr.split('-').map(s=>parseInt(s,10));
+  const rm = reduceToSingleDigit(m);
+  const rd = reduceToSingleDigit(d);
+  const ry = reduceToSingleDigit(String(y).split('').reduce((a,dg)=>a+parseInt(dg,10),0));
+  const d1 = Math.abs(rm - rd);
+  const d2 = Math.abs(rd - ry);
+  const d3 = Math.abs(d1 - d2);
+  const d4 = Math.abs(rm - ry);
+  return { d1, d2, d3, d4 };
+}
+function calcPinnacles(dateStr, lifePathNumber){
+  const [y,m,d] = dateStr.split('-').map(s=>parseInt(s,10));
+  const rm = reduceNumber(m);
+  const rd = reduceNumber(d);
+  const ry = reduceNumber(String(y).split('').reduce((a,dg)=>a+parseInt(dg,10),0));
+  const p1 = reduceNumber(rm + rd);
+  const p2 = reduceNumber(rd + ry);
+  const p3 = reduceNumber(p1 + p2);
+  const p4 = reduceNumber(rm + ry);
+  const firstEnd = 36 - reduceToSingleDigit(lifePathNumber);
+  const secondEnd = firstEnd + 9;
+  const thirdEnd = secondEnd + 9;
+  return { p1, p2, p3, p4, firstEnd, secondEnd, thirdEnd };
+}
+
+/* ================= CONTEÚDO ================= */
+const LIFE_PATH_TEXT = {
+  1:[
+    'O tema central da sua vida é a autonomia radical. Você não veio para seguir o mapa que alguém já desenhou — veio para desenhar o próprio, mesmo que isso signifique andar sozinho boa parte do caminho. Enquanto a maioria das pessoas busca segurança em seguir um caminho já testado, sua alma se sente sufocada por isso; ela precisa do risco de ser a primeira a tentar.',
+    'Isso aparece cedo. Desde criança, provavelmente você resistiu a fazer as coisas só porque "sempre foi assim" — questionou regras, testou limites sozinho antes de perguntar se podia, teve fases de teimosia que na real eram sua primeira tentativa de descobrir quem você era, separado da vontade dos outros.',
+    'Aqui mora o seu paradoxo: a mesma força que te torna visionário é a que te isola. Sua confiança na própria visão é real e valiosa, mas sem freio ela vira dificuldade genuína de ouvir, de aceitar que outra pessoa também pode estar certa, de dividir o palco. Você pode confundir liderar com controlar tudo sozinho — e aí a mesma coragem que te levou longe começa a te custar caro.',
+    'Em relações — de trabalho, amizade ou amor — esse padrão se repete: você atrai gente que admira sua força, mas frustra quem precisa de espaço pra também opinar. Parceiros e amigos vão, mais de uma vez, sentir que a relação gira em torno da sua vontade. Não por maldade sua, e sim porque pedir input dos outros nunca foi seu primeiro instinto.',
+    'A lição que sua vida cobra, repetidamente, é essa: força verdadeira não é fazer tudo sozinho, é saber quando se apoiar sem perder quem você é. Quando você aprende isso, sua capacidade nata de abrir caminho deixa de isolar e começa a inspirar — as pessoas passam a querer seguir você, não só te admirar de longe.'
+  ],
+  2:[
+    'O tema central da sua vida é a ponte — entre pessoas, entre ideias, entre posições que parecem impossíveis de conciliar. Você não veio para vencer sozinho: veio para fazer os outros vencerem juntos, e sua sensibilidade para sentir o que ninguém disse em voz alta é a ferramenta mais afiada que você tem, mesmo quando não sabe usá-la a seu favor.',
+    'Isso aparece cedo, geralmente na forma de uma criança que percebia o clima emocional da casa antes de qualquer adulto verbalizar — que sabia quando alguém estava triste sem ninguém contar, que se colocava no papel de mediadora de brigas entre irmãos ou colegas quase sem querer. Essa sensibilidade nunca foi ensinada; ela sempre esteve ali.',
+    'Seu paradoxo é este: a mesma empatia que te torna insubstituível em qualquer time ou relação é a que te faz desaparecer dentro dela. Você aprende cedo a ler o que o outro precisa, e sem perceber, começa a priorizar isso acima do que você mesmo precisa — até o ponto de, anos depois, ter dificuldade real de responder "o que eu quero?" sem pensar primeiro em quem isso vai incomodar.',
+    'Em relações, isso cria um padrão sutil: você é a pessoa confiável, a que não abandona, a que segura a barra — mas raramente é a que pede colo de volta. Parceiros e amigos podem, sem perceber, se acostumar a receber mais do que dão, simplesmente porque você nunca reclamou.',
+    'A lição que sua vida cobra é aprender que discordar não destrói a harmonia — faz parte dela. Sua vida vai te colocar, mais de uma vez, diante da escolha entre manter a paz e dizer a verdade. Toda vez que você escolhe a verdade sem deixar de ser gentil, você cresce na direção certa.'
+  ],
+  3:[
+    'O tema central da sua vida é a expressão — em palavra, em imagem, em som, na forma que for, mas expressão. Você não veio para guardar o que sente e pensa; veio para colocar isso pra fora, de um jeito que toque outras pessoas. Quando você se cala por medo de ser "demais", uma parte real da sua energia vital fica represada, e isso pesa mais em você do que em qualquer outro número.',
+    'Isso aparece cedo — na criança que inventava histórias, que cantava sem ninguém pedir, que era "elétrica demais" pros padrões de sala de aula. Muita gente com esse número cresce ouvindo que precisa "se acalmar" ou "parar de chamar atenção", sem perceber que estava tentando apagar justamente o que havia de mais vivo naquela pessoa.',
+    'Seu paradoxo é a dispersão. A mesma criatividade fácil que te faz começar dez projetos com a mesma empolgação é a que te impede de terminar a maioria deles — porque a ideia seguinte sempre parece mais brilhante que a de ontem. Seu talento nunca foi o problema; o problema é o compromisso de sustentar um talento até o fim.',
+    'Em relações, você é a pessoa que ilumina a sala, que todo mundo quer por perto — mas pode ser vista como inconstante, alguém que promete e não sustenta, que se emociona fácil e esfria rápido também. Isso machuca quem espera profundidade constante de você, quando na real sua profundidade existe, só que em explosões, não em fluxo contínuo.',
+    'A lição que sua vida cobra é foco — não menos criatividade, e sim mais compromisso com uma ideia até o fim. Quando você aprende a terminar o que começa, sua expressão para de ser fogo de palha e vira algo que realmente muda a vida de quem recebe.'
+  ],
+  4:[
+    'O tema central da sua vida é construir o que dura. Enquanto o mundo inteiro corre atrás do atalho, você é a pessoa que sustenta a estrutura que todo mundo vai precisar depois — sua vida ganha sentido profundo quando algo sólido nasce das suas próprias mãos, ainda que devagar, ainda que sem aplauso imediato.',
+    'Isso aparece cedo, muitas vezes na forma de uma criança organizada demais pra idade, que gostava de rotina, que se sentia mais segura com regras claras do que com liberdade sem limite. Enquanto outras crianças pediam mais liberdade, você provavelmente pedia mais previsibilidade — e isso não era medo, era sua forma nata de se sentir segura no mundo.',
+    'Seu paradoxo é a rigidez. A mesma disciplina que te torna a pessoa mais confiável de qualquer grupo é a que te trava diante do imprevisto — sua necessidade de controle e estrutura pode virar resistência a qualquer mudança, mesmo quando a mudança é exatamente o que a situação está pedindo. Você constrói tão bem que às vezes esquece que nem toda estrutura precisa durar para sempre.',
+    'Em relações, você é quem aparece, quem cumpre, quem não some — mas pode ser visto como inflexível, alguém difícil de convencer, que prefere o jeito conhecido mesmo quando ele já não funciona mais. Isso frustra parceiros e amigos mais espontâneos, que sentem que precisam "pedir licença" pra propor qualquer mudança de plano.',
+    'A lição que sua vida cobra é flexibilidade sem perder a base. Você não precisa abrir mão da solidez que te define — precisa aprender que ela pode se adaptar sem desmoronar. Quando você entende isso, deixa de ser só confiável e passa a ser também leve.'
+  ],
+  5:[
+    'O tema central da sua vida é a liberdade — não como luxo, e sim como condição de sobrevivência da sua própria identidade. Você veio para experimentar: lugares, ideias, versões de si mesmo, e trazer de volta pro mundo aquilo que só quem se movimenta de verdade consegue enxergar. Ficar parado não é neutro pra você, é lentamente sufocante.',
+    'Isso aparece cedo, na criança inquieta, curiosa demais, que mudava de interesse toda semana e enlouquecia quem tentava encaixá-la numa rotina fixa. Você provavelmente ouviu, mais de uma vez, que precisava "ficar quieto" ou "se decidir" — sem que ninguém entendesse que sua natureza simplesmente não opera em linha reta.',
+    'Seu paradoxo é a fuga disfarçada de liberdade. A mesma adaptabilidade que te faz brilhar em qualquer ambiente novo é a que te faz sumir assim que algo pede raiz — um compromisso, uma rotina, uma responsabilidade de longo prazo. Parte de você sente vontade de ir embora antes mesmo de dar a chance de dar certo, porque o medo de ficar preso chega antes da curiosidade de ficar.',
+    'Em relações, você é magnético, divertido, do tipo que todo mundo quer por perto — mas pode ser visto como alguém em quem não dá pra confiar de verdade, porque parece sempre meio de saída, mesmo quando fisicamente está presente. Isso machuca quem se apega a você e sente o chão balançar toda vez que sua inquietação aparece.',
+    'A lição que sua vida cobra é entender que compromisso não é prisão. Existe liberdade real dentro de uma estrutura, não só fora dela — e quando você aprende isso, para de fugir do que poderia ser o lugar mais seguro que você já teve.'
+  ],
+  6:[
+    'O tema central da sua vida é o cuidado — de casa, de família, de comunidade, do que for, mas cuidado. Sua vida ganha significado profundo quando alguém floresce por causa da sua presença, e essa necessidade de servir de base pra outros não é fraqueza, é a forma mais genuína da sua força.',
+    'Isso aparece cedo, na criança que cuidava dos irmãos mais novos, que se preocupava com os pais antes da idade de se preocupar com qualquer coisa, que sentia como sua a responsabilidade de manter todo mundo bem. Muita gente com esse número teve infância curta demais, justamente por assumir cedo demais um papel de cuidado que ninguém pediu, mas que pareceu necessário.',
+    'Seu paradoxo é o martírio. A mesma capacidade de cuidado genuíno que te torna insubstituível é a que te faz esquecer de si mesmo — você pode dar tanto, por tanto tempo, que o cansaço vira ressentimento silencioso, mesmo sem querer, mesmo sem admitir. E quando ninguém retribui na mesma medida, a mágoa se acumula em vez de ser dita.',
+    'Em relações, você é o pilar, a pessoa segura, quem todo mundo procura em crise — mas raramente é quem procuram só para saber como você está. Isso cria um desequilíbrio que você mesmo alimenta, porque nunca soube pedir de volta o que sempre deu.',
+    'A lição que sua vida cobra é limite. Cuidar de si também é cuidar dos outros — dizer "não" às vezes é o ato de amor mais maduro que você pode oferecer, tanto pra você quanto pra quem depende de você não quebrar.'
+  ],
+  7:[
+    'O tema central da sua vida é a busca — entender o porquê por trás de tudo, mesmo que isso signifique passar mais tempo sozinho do que a maioria das pessoas suportaria. Sua alma não aceita resposta pronta; ela precisa desmontar, investigar, sentir a verdade por baixo da superfície antes de aceitar qualquer coisa como fato.',
+    'Isso aparece cedo, na criança observadora, quieta em ambientes barulhentos, que preferia um livro ou uma pergunta sem resposta a uma festa cheia de gente. Provavelmente você foi chamado de "sério demais" ou "difícil de entender" antes mesmo de ter idade pra explicar que só estava processando o mundo num ritmo mais profundo que os outros.',
+    'Seu paradoxo é o isolamento. A mesma profundidade que te torna alguém raro — de substância real, não papo raso — é a que te afasta justamente de quem mais quer chegar perto. Sua necessidade de solitude, sem perceber, vira desconexão real; e sua desconfiança inicial, que existe pra te proteger, muitas vezes afasta gente boa antes dela ter chance de provar que merece confiança.',
+    'Em relações, você exige — sem sempre admitir isso em voz alta — profundidade intelectual e emocional de quem está perto. Relações rasas te esgotam rápido. Mas seu jeito de proteger a própria vulnerabilidade (ironia, silêncio, distância) pode passar a impressão de frieza pra quem só queria se aproximar de verdade.',
+    'A lição que sua vida cobra é sentir antes de entender tudo. Nem tudo precisa ser analisado pra ser vivido — e quando você aprende a se conectar mesmo sem ter todas as respostas prontas, sua profundidade para de isolar e começa a atrair exatamente o tipo de relação rara que você sempre buscou.'
+  ],
+  8:[
+    'O tema central da sua vida é o poder — não como tabu, mas como ferramenta de trabalho. Dinheiro, resultado, impacto mensurável: essas coisas não te envergonham, elas te movem. Sua missão passa pelo mundo material, e por aprender a liderar sem esmagar quem está ao seu lado no caminho até lá.',
+    'Isso aparece cedo, na criança ou adolescente com visão de longo prazo incomum pra idade — que já pensava em resultado, em conquista, em "chegar lá" enquanto os colegas pensavam só no presente. Você provavelmente sempre teve fome de mais, mesmo sem saber nomear exatamente o que era esse "mais".',
+    'Seu paradoxo é usar as pessoas como meio pro resultado, mesmo sem perceber que está fazendo isso. Sua ambição, sem freio, tende a colocar a conquista acima da relação — e você só percebe o preço disso quando alguém importante já se afastou, cansado de ser tratado como parte da estratégia em vez de parte da vida.',
+    'Em relações, você é admirado pela força e pela capacidade de execução, mas pode ser visto como frio, calculista, sempre um passo à frente de qualquer conexão genuína. Parceiros podem sentir que competem com sua ambição por atenção — e frequentemente perdem.',
+    'A lição que sua vida cobra é entender que sucesso sem ninguém pra dividir é uma vitória vazia. Quando você aprende a equilibrar ambição com humanidade, sua capacidade de construir império deixa de custar relações e passa a fortalecê-las.'
+  ],
+  9:[
+    'O tema central da sua vida é a generosidade em escala. Você sente o mundo maior do que a própria vida individual — causas, comunidade, legado importam pra você mais do que conforto pessoal, e sua vida cobra, repetidamente, aprender onde termina o cuidado com o outro e começa o sacrifício desnecessário de si mesmo.',
+    'Isso aparece cedo, na criança que se incomodava com injustiça antes de entender o conceito, que dividia o que tinha sem pensar duas vezes, que sentia a dor alheia quase como própria. Você provavelmente foi descrito como "sensível demais" pra esse mundo — e talvez seja mesmo, só que isso nunca foi defeito.',
+    'Seu paradoxo é o sacrifício desnecessário. A mesma compaixão que te torna especial é a que te faz dar tanto de si que sobra pouco — e quando ninguém retribui na mesma medida (o que acontece, porque poucos têm sua capacidade de doação), a mágoa se acumula em silêncio, disfarçada de resignação.',
+    'Em relações, você é generoso, sábio, o tipo de presença que as pessoas procuram nos momentos difíceis — mas pode carregar mágoas antigas de gente que recebeu muito e devolveu pouco, porque você raramente cobra o que merece em troca.',
+    'A lição que sua vida cobra é desapego — soltar o que já cumpriu seu ciclo, sejam pessoas, fases, ou versões antigas de você mesmo. Quando você aprende a dar sem se esvaziar, sua generosidade deixa de ser fardo e volta a ser o dom que sempre foi.'
+  ],
+  11:[
+    'Número mestre. O tema central da sua vida é ser canal — de ideia, de intuição, de inspiração que vem de um lugar que você mesmo, às vezes, não sabe explicar direito. Você enxerga o que os outros ainda não veem, quase como intuição pura, antes mesmo dessa percepção virar linguagem que os outros entendam.',
+    'Isso aparece cedo, geralmente como uma sensibilidade que assusta os adultos ao redor — a criança que "sentia" coisas antes de acontecerem, que tinha reações emocionais fortes demais pra situações que pareciam pequenas pra todo mundo, mas que pra ela carregavam um peso invisível real.',
+    'Seu paradoxo é a ansiedade paralisante. Toda essa sensibilidade, sem estrutura pra sustentá-la, pode virar sobrecarga emocional constante — você sente demais, o tempo todo, de todo mundo ao redor, e isso pode te deixar drenado antes mesmo de agir sobre qualquer uma dessas percepções.',
+    'Em relações, você é procurado por conselho, por perspectiva, por aquele "algo diferente" que as pessoas sentem mas não sabem nomear — mas pode se afastar quando a intensidade da própria sensibilidade fica grande demais pra administrar em público.',
+    'A lição que sua vida cobra é dar corpo prático às suas intuições, em vez de só senti-las e guardar. Quando você constrói estrutura suficiente pra sua sensibilidade não te consumir, ela deixa de ser fardo e vira exatamente o dom raro que sempre foi.'
+  ],
+  22:[
+    'Número mestre, o "construtor mestre". O tema central da sua vida é raro: pegar um sonho do tamanho de uma visão coletiva e transformar em algo concreto, funcional, que dure gerações. Não se trata de sonhar grande — trata-se de construir grande, com os pés no chão o tempo todo.',
+    'Isso aparece cedo, muitas vezes como uma criança com ambição que parecia grande demais pra idade, que já pensava em impacto, em estrutura, em "o que vou deixar" muito antes de ter idade pra isso fazer sentido pros adultos ao redor.',
+    'Seu paradoxo é a pressão interna esmagadora. Você carrega a sensação constante de que precisa fazer algo grandioso, sempre — e isso, em vez de te impulsionar, muitas vezes te paralisa. A distância entre a visão gigante que você enxerga e o passo pequeno que você consegue dar hoje pode parecer, injustamente, um fracasso.',
+    'Em relações, você inspira confiança e é procurado como líder natural, mas pode ser visto como inacessível, sempre um degrau acima, difícil de alcançar de forma íntima — porque sua mente está sempre em escala, mesmo quando a situação pedia só presença simples.',
+    'A lição que sua vida cobra é paciência com o próprio ritmo, sem abandonar a ambição. Passos pequenos também constroem legado — e quando você aceita isso, para de se cobrar grandiosidade constante e começa, enfim, a construir de verdade.'
+  ],
+  33:[
+    'Número mestre, o mais raro de todos — o "mestre professor". O tema central da sua vida é cuidar em escala: ensinar, curar, guiar, quase sempre exigindo mais entrega de você do que das pessoas ao seu redor. Sua presença tende a ser descrita como "diferente", mesmo por quem não sabe explicar exatamente o porquê.',
+    'Isso aparece cedo, como uma mistura pouco comum entre sensibilidade (a intuição do 11) e capacidade prática de ajudar (a construção do 22) — você provavelmente foi, desde criança, a pessoa que os outros procuravam quando algo doía, mesmo sem ter idade ou preparo pra isso.',
+    'Seu paradoxo é se esquecer completamente de si mesmo. Sua entrega pode ser tão grande que você se torna a última prioridade da própria vida — cuidando de todo mundo, inclusive de estranhos, enquanto negligencia a própria exaustão até ela virar colapso.',
+    'Em relações, você é o ponto de apoio de muita gente ao mesmo tempo — família, amigos, e até desconhecidos que sentem que podem confiar em você à primeira vista. Mas raramente alguém pergunta como você está, porque você nunca dá abertura pra isso, sempre voltando o foco pro outro.',
+    'A lição que sua vida cobra, com insistência, é que você também merece o cuidado que oferece ao mundo inteiro. Essa não é uma lição opcional pra você — sua vida vai repeti-la de várias formas até você finalmente aceitar.'
+  ]
+};
+const DESTINY_TEXT = {
+  1:[
+    'Seu Destino aponta pra liderança — não porque você busca cargo ou status, mas porque você se realiza de verdade quando tem autonomia real sobre o próprio trabalho. Seguir a escala de outra pessoa, por mais bem-sucedida que seja, sempre vai parecer pequeno demais pro tamanho da sua visão.',
+    'Isso aparece cedo na forma de inquietação com hierarquias que não fazem sentido pra você — a vontade de fazer diferente, de questionar o processo, de assumir responsabilidade antes mesmo de ser convidado. Empregos ou tarefas onde você só executa ordem alheia tendem a te esgotar rápido, não pela dificuldade, mas pela falta de espaço pra imprimir sua marca.',
+    'O paradoxo aqui é que sua necessidade de liderar pode, sem querer, empurrar colegas e parceiros pra um papel secundário — mesmo pessoas competentes acabam se sentindo apagadas perto da sua intensidade de iniciativa. Você não faz isso por arrogância; faz porque literalmente não sabe operar de outro jeito quando está engajado com algo que acredita.',
+    'Profissionalmente, você floresce em posições de comando, empreendedorismo, ou qualquer papel onde o resultado depende diretamente da sua decisão. Trabalhos em equipe funcionam melhor quando você lidera de fato, não quando tenta se encaixar como "mais um".',
+    'A realização plena chega quando você aprende a liderar incluindo, não substituindo — usando sua iniciativa pra abrir espaço pros outros brilharem também, em vez de brilhar sozinho no centro de tudo.'
+  ],
+  2:[
+    'Seu Destino aponta pra parceria — trabalho em dupla, mediação, colaboração próxima. Sozinho, sua energia perde metade da força; é no encontro com o outro que sua capacidade de realização se completa de verdade.',
+    'Isso aparece cedo como uma facilidade natural em trabalhos de grupo, em papéis de apoio que outros subestimam mas que você executa com uma sensibilidade rara — você sempre soube captar o que o time precisava antes de qualquer reunião formal decidir isso.',
+    'O paradoxo é que essa mesma facilidade de se adaptar ao outro pode te deixar invisível profissionalmente — você contribui tanto pros resultados dos outros que corre o risco de nunca ser reconhecido pelos próprios méritos, porque raramente reivindica o crédito que merece.',
+    'Você se realiza em parcerias de negócio, cargos de conselheiro ou consultor próximo de uma liderança, ou qualquer função onde a colaboração de dois talentos gera mais do que a soma das partes. Ambientes extremamente competitivos e individualistas tendem a sufocar seu melhor trabalho.',
+    'A realização plena chega quando você aprende a pedir — e aceitar — reconhecimento pelo que contribui, sem esperar que alguém perceba sozinho. Parceria de verdade é via de mão dupla, inclusive no crédito.'
+  ],
+  3:[
+    'Seu Destino aponta pra criação e comunicação. Trabalhos que abafam sua expressão — burocráticos, repetitivos, sem espaço criativo nenhum — vão sempre parecer pequenos demais pro que você é capaz de gerar quando solto.',
+    'Isso aparece cedo como talento natural em contar histórias, se apresentar, produzir algo do nada que capture atenção alheia. Professores e colegas provavelmente notaram isso antes de você mesmo saber nomear como talento profissional.',
+    'O paradoxo é que sua facilidade de criar pode te fazer levar o próprio talento como garantido, sem o refinamento técnico que separaria "bom" de "excepcional" — você confia tanto na inspiração que às vezes negligencia o ofício por trás dela.',
+    'Você se realiza em carreiras criativas, comunicação, artes, ou qualquer papel que exija presença e capacidade de expressar ideia de forma envolvente. Cargos totalmente técnicos e sem interação social tendem a te sufocar aos poucos.',
+    'A realização plena chega quando você trata seu talento como ofício a ser lapidado, não só dom a ser usado — é aí que "bom em criar" vira carreira sólida, não só habilidade social.'
+  ],
+  4:[
+    'Seu Destino aponta pra construção sólida — tijolo por tijolo, sem atalho. Empreitadas de resultado rápido e instável nunca vão te satisfazer de verdade; você precisa ver a estrutura sendo erguida com as próprias mãos, mesmo que devagar.',
+    'Isso aparece cedo como talento organizacional que os outros procuram — você é quem resolve o caos, quem cria sistema onde havia bagunça, quem termina o que promete entregar, no prazo, sem drama.',
+    'O paradoxo é que sua confiabilidade pode virar sobrecarga: por ser a pessoa em quem todo mundo confia pra "resolver direito", você acaba herdando responsabilidade demais, muitas vezes sem o reconhecimento ou compensação proporcional ao que carrega.',
+    'Você se realiza em carreiras que recompensam consistência e método — engenharia, gestão de operações, planejamento, qualquer área onde o resultado de longo prazo importa mais que o brilho imediato. Ambientes caóticos e sem estrutura te desgastam rápido.',
+    'A realização plena chega quando você aprende a dizer que já está sobrecarregado, em vez de simplesmente absorver mais uma responsabilidade porque "alguém precisa fazer". Seu valor não depende de aguentar tudo sozinho.'
+  ],
+  5:[
+    'Seu Destino aponta pra variedade — mais de um projeto, mais de um caminho, movimento constante. Uma carreira de rotina fixa, sem novidade nenhuma, mata seu propósito aos poucos, mesmo que pague bem.',
+    'Isso aparece cedo como dificuldade genuína de se manter numa única trajetória — você testou vários interesses, mudou de ideia sobre "o que quer ser" mais vezes que a média, e isso nunca foi indecisão, foi sua forma de mapear o próprio caminho.',
+    'O paradoxo é que essa necessidade de variedade pode ser lida como falta de compromisso profissional — currículos com muitas mudanças, projetos abandonados no meio, dificuldade real de "assentar" numa única área por tempo suficiente pra se aprofundar.',
+    'Você se realiza em carreiras com liberdade de movimento — vendas, viagem a trabalho, empreendedorismo próprio, áreas que mudam rápido como tecnologia ou mídia. Cargos extremamente engessados, com rotina idêntica todo dia, tendem a te sufocar rápido.',
+    'A realização plena chega quando você encontra uma área ampla o suficiente pra caber toda sua variedade dentro dela — não é sobre nunca se firmar, é sobre escolher um campo grande o bastante pra explorar sem precisar recomeçar do zero toda vez.'
+  ],
+  6:[
+    'Seu Destino aponta pra cuidado, ensino, serviço — o papel de servir de base pra outros crescerem. É nesse tipo de trabalho, mais do que em qualquer conquista individual, que sua vida ganha sentido de verdade.',
+    'Isso aparece cedo como facilidade natural em ensinar, orientar, cuidar de quem está começando — você provavelmente foi a pessoa que colegas mais novos procuravam, mesmo sem ocupar formalmente esse papel.',
+    'O paradoxo é que sua vontade de cuidar profissionalmente pode te prender em papéis de suporte permanente, sem nunca buscar o crescimento pessoal que também merece — você constrói a carreira dos outros e esquece de construir a própria com a mesma dedicação.',
+    'Você se realiza em educação, saúde, RH, liderança de equipe com foco em desenvolvimento humano, ou qualquer carreira onde formar pessoas é parte central do trabalho. Ambientes frios e puramente transacionais tendem a esvaziar seu propósito.',
+    'A realização plena chega quando você aceita que também merece ser desenvolvido, não só desenvolver os outros — buscar mentoria, investir na própria carreira com a mesma seriedade que investe na dos outros.'
+  ],
+  7:[
+    'Seu Destino aponta pra profundidade — pesquisa, estudo real, busca de verdade por trás da superfície. Trabalho raso, por mais bem pago que seja, nunca vai bastar pra preencher sua necessidade de entender.',
+    'Isso aparece cedo como fascínio por assuntos que a maioria considera "chatos demais" — você aprofunda onde os outros passam batido, e isso, cedo ou tarde, vira expertise real em algo específico.',
+    'O paradoxo é que sua busca por profundidade pode te isolar do reconhecimento profissional — você domina o assunto, mas evita o holofote, e isso significa que gente com menos conhecimento real muitas vezes recebe crédito que deveria ser seu.',
+    'Você se realiza em pesquisa, análise, ciência, áreas técnicas especializadas, ou qualquer carreira que recompense profundidade em vez de generalismo. Ambientes que exigem networking constante e superficial tendem a te drenar rápido.',
+    'A realização plena chega quando você aprende a comunicar seu conhecimento pro mundo, não só acumulá-lo em silêncio — sua expertise só gera impacto real quando alguém além de você fica sabendo dela.'
+  ],
+  8:[
+    'Seu Destino aponta pro mundo material — negócios, gestão, resultado mensurável. Ambição não é defeito no seu caminho profissional, é combustível legítimo, e fingir que não liga pra dinheiro ou status só te afasta da sua própria realização.',
+    'Isso aparece cedo como visão de longo prazo incomum — você pensava em "carreira" e "resultado" enquanto colegas ainda pensavam só no presente, e isso sempre te deu uma vantagem estratégica silenciosa.',
+    'O paradoxo é que essa fome de resultado pode te fazer sacrificar relações no caminho — colegas e parceiros que se sentiram "usados" como degrau, mesmo sem essa ter sido sua intenção consciente.',
+    'Você se realiza em negócios próprios, cargos executivos, área financeira, ou qualquer carreira onde ambição e resultado mensurável andam juntos abertamente. Ambientes que desvalorizam ambição ou tratam dinheiro como tabu tendem a te frustrar.',
+    'A realização plena chega quando você constrói resultado COM as pessoas, não sobre elas — sua capacidade de execução, combinada com parceria genuína, é o que separa poder que isola de poder que multiplica.'
+  ],
+  9:[
+    'Seu Destino aponta pra causas maiores que você mesmo. Trabalhos puramente egoístas, sem nenhum impacto além do próprio bolso, nunca vão preencher o vazio que você sente quando sua carreira não serve a nada além de si.',
+    'Isso aparece cedo como incômodo genuíno diante de injustiça, e vontade real de fazer parte da solução — não como discurso, mas como necessidade emocional de que seu trabalho signifique algo maior.',
+    'O paradoxo é que essa generosidade profissional pode te fazer aceitar remuneração injusta "pela causa", ou carregar responsabilidade emocional de problemas que não são só seus — seu idealismo, sem limite, vira exploração alheia da sua boa vontade.',
+    'Você se realiza em áreas sociais, causas, educação com propósito, ou qualquer carreira — mesmo corporativa — que tenha um componente claro de impacto além do lucro. Ambientes puramente mercenários tendem a esvaziar seu sentido de trabalho.',
+    'A realização plena chega quando você entende que ser bem remunerado pelo impacto que gera não diminui a generosidade do gesto — pelo contrário, sustenta você pra continuar gerando esse impacto por mais tempo.'
+  ],
+  11:[
+    'Seu Destino é inspirar — através de ideias, arte, espiritualidade ou qualquer canal que carregue mensagem além do óbvio. Você é canal antes de ser autor; sua realização profissional está ligada a transmitir algo maior do que você mesmo.',
+    'Isso aparece cedo como sensibilidade incomum pra captar o clima de um grupo, uma tendência antes dela virar óbvia, uma verdade que os outros ainda não verbalizaram — você "sente" antes de "saber", e isso é raro no ambiente de trabalho tradicional.',
+    'O paradoxo é que essa sensibilidade pode te fazer sentir constantemente fora de lugar em estruturas corporativas rígidas — você percebe demais, questiona demais, e isso incomoda ambientes que preferem conformidade.',
+    'Você se realiza em áreas criativas, espirituais, de comunicação, ou qualquer campo onde visão e intuição têm espaço pra se expressar sem serem podadas. Burocracia excessiva e hierarquia engessada tendem a sufocar seu melhor trabalho.',
+    'A realização plena chega quando você constrói estrutura suficiente ao redor da própria sensibilidade pra transformá-la em entrega concreta — inspiração sem execução vira só ansiedade; inspiração com execução vira legado.'
+  ],
+  22:[
+    'Seu Destino é construir legado em grande escala — algo que beneficie muita gente além de você mesmo. Pequenos projetos isolados sempre vão parecer aquém do que você sente que é capaz de gerar.',
+    'Isso aparece cedo como ambição que parecia grande demais pra idade — você já pensava em impacto coletivo, em deixar marca, muito antes de ter ferramenta prática pra executar isso.',
+    'O paradoxo é que essa visão grandiosa pode te paralisar diante do primeiro passo pequeno — a distância entre "mudar o mundo" e "mandar um e-mail hoje" parece enorme, e você às vezes trava justamente pela magnitude do próprio sonho.',
+    'Você se realiza em empreendimentos de impacto social, construção civil ou infraestrutura em sentido amplo, organizações grandes, ou qualquer carreira onde visão de longo prazo se traduz em algo tangível pra muita gente. Trabalhos pequenos e isolados tendem a te frustrar.',
+    'A realização plena chega quando você aceita que legado se constrói em passos, não de uma vez — cada tijolo pequeno é, sim, parte da obra grande que você veio construir.'
+  ],
+  33:[
+    'Seu Destino é ensinar e curar em nível coletivo. Trabalhos pequenos e isolados, sem alcance além do círculo mais próximo, sempre vão parecer incompletos pra sua missão profissional.',
+    'Isso aparece cedo como uma mistura pouco comum de sensibilidade e capacidade prática — você sempre foi procurado por conselho ou ajuda, mesmo sem cargo ou autoridade formal pra isso.',
+    'O paradoxo é que sua vocação de cuidar em escala pode te fazer aceitar sobrecarga profissional sem limite — você dá tanto de si no trabalho que a exaustão vira rotina normalizada, até o corpo ou a mente cobrarem a conta.',
+    'Você se realiza em educação, saúde, liderança com propósito social, ou qualquer carreira que combine ensino com cuidado em escala. Ambientes puramente transacionais, sem espaço pra impacto humano, tendem a esvaziar profundamente seu sentido de trabalho.',
+    'A realização plena chega quando você aceita ajuda e limite tanto quanto oferece — sua capacidade de cuidar em escala só é sustentável se você também for cuidado.'
+  ]
+};
+const SOUL_TEXT = {
+  1:[
+    'No fundo do seu coração, o que você mais deseja é ser reconhecido por conta própria — sem depender da aprovação, da ajuda ou da validação de ninguém pra saber que é capaz. Esse desejo é tão antigo quanto sua memória mais precoce, e ele nunca foi sobre ego: é sobre precisar sentir, na pele, que a própria força é real.',
+    'Isso aparece desde cedo como resistência a receber ajuda mesmo quando precisava dela — recusar auxílio em tarefas, insistir em fazer sozinho o que seria mais fácil em dupla, tudo em nome de provar, primeiro pra si mesmo, que dava conta.',
+    'O paradoxo da sua alma é que essa busca por autossuficiência pode te isolar exatamente da conexão que também deseja, mesmo sem admitir. Você quer ser visto como forte, mas esconder toda fragilidade tem um custo: as pessoas só conseguem se aproximar de verdade quando você permite ser visto por inteiro, não só na versão vitoriosa.',
+    'Em relações íntimas, você busca parceiros que reconheçam sua individualidade sem tentar te moldar — qualquer tentativa de controle ou dependência excessiva do outro faz seu coração recuar instintivamente, mesmo quando a intenção do outro era só amor.',
+    'A paz chega quando você entende que aceitar apoio não anula sua força — ela só fica mais sustentável. Seu coração não precisa provar nada pra ninguém, inclusive pra você mesmo.'
+  ],
+  2:[
+    'No fundo do seu coração, o que você mais deseja é paz e conexão verdadeira. Harmonia importa mais pra você do que estar "certo" numa discussão — seu coração prefere ceder um ponto a perder uma relação, mesmo quando isso significa engolir algo que deveria ter dito.',
+    'Isso aparece desde cedo como desconforto físico real diante de conflito — brigas alheias te afetam quase tanto quanto brigas próprias, e sua primeira reação instintiva é sempre tentar suavizar, mediar, acalmar, mesmo antes de processar o que você mesmo sente sobre a situação.',
+    'O paradoxo da sua alma é que essa busca por harmonia pode te fazer desaparecer de vista própria — anos priorizando o conforto alheio a ponto de perder contato com o que você mesmo queria antes de qualquer negociação começar.',
+    'Em relações íntimas, você é o parceiro que ouve, que se adapta, que raramente cria atrito — mas corre o risco de acumular necessidades não ditas até elas explodirem de uma vez, de um jeito desproporcional ao que parecia, de fora, um relacionamento tranquilo.',
+    'A paz chega quando você aprende que expressar uma necessidade não é o mesmo que criar conflito — na verdade, é isso que evita o conflito maior de anos de silêncio acumulado.'
+  ],
+  3:[
+    'No fundo do seu coração, o que você mais deseja é ser visto e ouvido de verdade. Silêncio forçado por muito tempo pesa em você mais do que em qualquer outro número — não expressar o que sente é, pra sua alma, uma forma sutil de sufocamento.',
+    'Isso aparece desde cedo como necessidade de atenção que às vezes foi mal interpretada como "manha" ou "showzinho" — quando na real era só seu jeito de comunicar que tinha algo importante acontecendo por dentro que precisava sair.',
+    'O paradoxo da sua alma é que essa necessidade genuína de expressão pode, quando reprimida por tempo demais, virar drama desproporcional — pequenas coisas ganham peso enorme simplesmente porque a válvula de escape normal estava fechada havia tempo.',
+    'Em relações íntimas, você busca parceiros que realmente escutem, não só ouçam — que valorizem seu jeito de sentir as coisas em alta intensidade, em vez de pedir que você "se acalme" o tempo todo.',
+    'A paz chega quando você encontra canais saudáveis de expressão constante na própria vida — não é sobre guardar tudo pra um momento de explosão, é sobre ter válvulas regulares de saída pro que sente.'
+  ],
+  4:[
+    'No fundo do seu coração, o que você mais deseja é segurança e estrutura — uma base sólida onde possa se apoiar sem medo de que tudo desmorone de repente. Imprevisibilidade, pra sua alma, é quase sinônimo de perigo, mesmo quando racionalmente você sabe que não é.',
+    'Isso aparece desde cedo como conforto em rotina e desconforto genuíno diante de mudança repentina — você provavelmente sempre precisou de mais tempo que os outros pra se adaptar a qualquer coisa nova, não por lentidão, mas por necessidade real de entender o terreno antes de confiar nele.',
+    'O paradoxo da sua alma é que essa busca por segurança pode te prender em situações que já não servem mais — relações, empregos, rotinas que deveriam ter acabado há tempo, só continuam porque o desconhecido assusta mais que o desconforto do familiar.',
+    'Em relações íntimas, você busca constância acima de intensidade — prefere um amor previsível e confiável a uma paixão instável, mesmo que essa segunda pareça mais empolgante de fora.',
+    'A paz chega quando você entende que segurança de verdade vem de dentro, não só de circunstâncias externas estáveis — e que às vezes, o próprio crescimento exige atravessar exatamente a instabilidade que seu coração mais teme.'
+  ],
+  5:[
+    'No fundo do seu coração, o que você mais deseja é liberdade acima de quase tudo — a sensação de não estar preso a nada nem a ninguém. Qualquer coisa que soe como jaula, mesmo bem-intencionada, faz sua alma recuar instintivamente.',
+    'Isso aparece desde cedo como inquietação diante de qualquer limite — regras que pareciam arbitrárias, rotinas impostas, promessas de longo prazo que soavam mais como prisão do que compromisso. Você sempre precisou entender o "porquê" da regra antes de aceitar segui-la.',
+    'O paradoxo da sua alma é que essa busca por liberdade pode sabotar exatamente as coisas boas que você constrói — relações, projetos, oportunidades que você mesmo abandona no momento em que começam a pedir compromisso real, por medo de ficar preso.',
+    'Em relações íntimas, você busca parceiros que não tentem te prender, que deem espaço genuíno pra sua individualidade continuar existindo dentro da relação — qualquer sinal de possessividade faz seu coração procurar a saída antes mesmo de tentar resolver.',
+    'A paz chega quando você entende que liberdade real não é ausência de compromisso — é a escolha consciente de ficar, renovada todo dia, dentro de uma relação ou caminho que você mesmo decide sustentar.'
+  ],
+  6:[
+    'No fundo do seu coração, o que você mais deseja é pertencer e cuidar — família, lar, comunidade, o sentimento de fazer parte de algo. Solidão prolongada dói em você mais do que aparenta de fora, mesmo quando você finge estar bem sozinho.',
+    'Isso aparece desde cedo como necessidade forte de proximidade familiar, de criar laços profundos, de ter um "time" que sinta como seu — mesmo quando isso significava assumir responsabilidade emocional antes da hora.',
+    'O paradoxo da sua alma é que essa necessidade de pertencer pode te fazer aceitar relações desequilibradas, onde você dá mais do que recebe, só pra manter o vínculo — o medo de ficar sozinho pesa mais, às vezes, do que o cansaço de carregar demais.',
+    'Em relações íntimas, você busca profundidade e compromisso genuíno — relações superficiais ou casuais nunca vão satisfazer sua alma, que precisa sentir que faz parte de verdade da vida do outro, não só de um momento dela.',
+    'A paz chega quando você aprende que merece pertencer a relações equilibradas, não só a relações que existem — e que se afastar de vínculos desiguais não é abandono, é autocuidado.'
+  ],
+  7:[
+    'No fundo do seu coração, o que você mais deseja é entender a verdade por trás das coisas. Respostas superficiais nunca vão aquietar sua mente — sua alma só descansa quando sente que chegou, de verdade, ao fundo de alguma questão.',
+    'Isso aparece desde cedo como desconforto com explicações "porque sim" — você sempre precisou entender o mecanismo por trás de qualquer regra, crença ou comportamento, mesmo quando isso te tornava "difícil" ou "questionador demais" aos olhos alheios.',
+    'O paradoxo da sua alma é que essa busca por verdade pode virar desconfiança generalizada — você analisa tanto as intenções alheias que às vezes rejeita conexões genuínas só porque não conseguiu "provar" que eram reais o suficiente antes de se permitir confiar.',
+    'Em relações íntimas, você busca profundidade intelectual e emocional real — parceiros que aceitem seu silêncio sem cobrar explicação constante, e que também tenham substância suficiente pra sustentar conversas que vão além do superficial.',
+    'A paz chega quando você aceita que algumas verdades só se revelam através da experiência, não da análise — e que confiar antes de ter certeza absoluta também é uma forma válida de sabedoria.'
+  ],
+  8:[
+    'No fundo do seu coração, o que você mais deseja é reconhecimento por conquista real — não é sobre vaidade, é sobre precisar sentir que o esforço valeu a pena, que o sacrifício teve propósito, que o trabalho duro se traduziu em algo tangível.',
+    'Isso aparece desde cedo como desconforto profundo com fracasso ou mediocridade — mesmo quando criança, você provavelmente já sentia que "só participar" não bastava, que o resultado importava de verdade.',
+    'O paradoxo da sua alma é que essa necessidade de conquista pode te fazer medir seu próprio valor exclusivamente pelo que você produz ou conquista — e nos momentos em que os resultados não vêm, sua autoestima despenca de um jeito desproporcional à situação real.',
+    'Em relações íntimas, você busca parceiros que admirem sua ambição em vez de tentar suavizá-la, e que também tenham objetivos próprios — relações onde só você "corre atrás de algo" tendem a te frustrar com o tempo.',
+    'A paz chega quando você entende que seu valor como pessoa não depende do último resultado — você já vale, independente da conquista mais recente ou da que ainda não chegou.'
+  ],
+  9:[
+    'No fundo do seu coração, o que você mais deseja é fazer diferença em algo maior que sua própria vida. Legado importa mais pra você do que conforto imediato — sua alma sente inquietação genuína quando a vida gira só em torno de si mesma, sem nenhum propósito maior no horizonte.',
+    'Isso aparece desde cedo como sensibilidade incomum diante da dor alheia, e desconforto real com desigualdade ou injustiça — você provavelmente sentia essas coisas de forma mais intensa que os colegas ao redor, quase como se fossem próprias.',
+    'O paradoxo da sua alma é que essa generosidade genuína pode virar autossabotagem — você se doa tanto por causas e pessoas que sobra pouco pra si mesmo, e o desgaste emocional acumulado raramente é visível de fora, porque você segue dando mesmo exausto.',
+    'Em relações íntimas, você busca parceiros que compartilhem algum senso de propósito maior — relações puramente centradas em conforto material, sem nenhuma camada de significado, tendem a parecer vazias pra você com o tempo.',
+    'A paz chega quando você aceita que cuidar de si mesmo também é parte do propósito maior — você não consegue doar por muito tempo de um poço que nunca se enche de volta.'
+  ],
+  11:[
+    'No fundo do seu coração, o que você mais deseja é significado espiritual em tudo que faz. Trabalho ou vida sem propósito maior soa genuinamente vazio pra você — sua alma precisa sentir que existe conexão entre o que faz no dia a dia e algo maior que ela mesma.',
+    'Isso aparece desde cedo como sensibilidade que ia além do racional — pressentimentos, intuições fortes sobre pessoas ou situações, uma percepção de que existe "mais" no mundo do que o que se vê com os olhos.',
+    'O paradoxo da sua alma é que essa sensibilidade elevada pode te deixar desconectado do concreto — tão focado em significado e intuição que as tarefas práticas do cotidiano parecem pequenas demais pra merecer sua atenção total, o que gera atrito real com a vida prática.',
+    'Em relações íntimas, você busca conexão que vá além do superficial — precisa sentir que existe profundidade espiritual ou emocional real ali, não só companhia ou conveniência.',
+    'A paz chega quando você aceita que significado espiritual também pode viver no concreto e no cotidiano — não precisa escolher entre elevado e prático, os dois podem coexistir dentro de você.'
+  ],
+  22:[
+    'No fundo do seu coração, o que você mais deseja é ver seus sonhos virarem realidade concreta, em escala. Não bastam ideias pra sua alma — ela precisa ver o tangível nascer, algo que qualquer pessoa consiga tocar, usar, viver.',
+    'Isso aparece desde cedo como frustração diante de conversas puramente teóricas, sem nenhum plano de execução — você sempre foi da turma que perguntava "tá, mas como a gente faz isso de verdade?", enquanto os outros ainda estavam sonhando em voz alta.',
+    'O paradoxo da sua alma é que essa necessidade de concretizar em grande escala pode te fazer desvalorizar conquistas menores no caminho — você só se permite sentir orgulho quando o resultado final está completo, ignorando o valor real de cada etapa percorrida até lá.',
+    'Em relações íntimas, você busca parceiros que também tenham visão de futuro e disposição pra construir junto, não só sonhar — relações sem nenhum senso de projeto compartilhado tendem a parecer, com o tempo, incompletas.',
+    'A paz chega quando você celebra o processo tanto quanto celebra a obra pronta — legado se constrói em etapas, e cada uma delas já merece ser reconhecida como conquista, não só como meio pro fim.'
+  ],
+  33:[
+    'No fundo do seu coração, o que você mais deseja é aliviar o sofrimento alheio de forma profunda — é quase um chamado, mais que uma escolha consciente. Sua alma sente a dor do outro com uma proximidade que a maioria das pessoas não experimenta.',
+    'Isso aparece desde cedo como incapacidade genuína de ver alguém sofrendo sem tentar ajudar, mesmo quando ninguém pediu — seu impulso de cuidado é quase automático, anterior a qualquer cálculo racional sobre se é sua responsabilidade ou não.',
+    'O paradoxo da sua alma é que essa compaixão sem limite pode te consumir por completo — você absorve tanto do sofrimento alheio que às vezes não sabe mais separar o que é dor sua do que é dor emprestada de quem você ajudou.',
+    'Em relações íntimas, você busca parceiros que também tenham profundidade emocional e disposição de cuidar mutuamente — relações onde só você cuida, sem receber cuidado de volta na mesma intensidade, drenam sua alma de um jeito silencioso e cumulativo.',
+    'A paz chega quando você aceita que aliviar o sofrimento do mundo não é trabalho de uma pessoa só — você pode importar-se profundamente sem carregar tudo sozinho.'
+  ]
+};
+const PERSONALITY_TEXT = {
+  1:[
+    'Quem te conhece de fora te vê como alguém confiante e decidido, mesmo nos dias em que por dentro você está em dúvida real. Essa é a primeira impressão que você deixa quase sempre: força, direção, alguém que sabe pra onde está indo.',
+    'Isso acontece porque sua energia natural comunica iniciativa antes mesmo de você abrir a boca — postura, ritmo de fala, a forma como você entra numa sala. As pessoas sentem que estão diante de alguém que resolve, mesmo antes de qualquer prova concreta disso.',
+    'A ironia é que essa fachada de confiança pode esconder justamente os momentos em que você mais precisaria de apoio — porque ninguém imagina que "aquela pessoa tão segura" também tem dúvida, e por isso raramente oferecem ajuda sem você pedir explicitamente.',
+    'Em primeiros encontros, isso te dá vantagem imediata — você é lembrado, respeitado, levado a sério rápido. O risco é ser mal interpretado como arrogante ou inacessível por quem confunde sua autoconfiança natural com distância emocional.',
+    'Vale usar essa percepção a seu favor sem deixar que ela vire máscara permanente — deixar as pessoas certas verem também a versão em dúvida, não só a decidida, aprofunda relações que a primeira impressão sozinha nunca conseguiria.'
+  ],
+  2:[
+    'Quem te conhece de fora te vê como alguém gentil e fácil de conversar — as pessoas se sentem seguras perto de você quase instantaneamente, mesmo em primeiros encontros breves.',
+    'Isso acontece porque sua energia é naturalmente receptiva — você escuta com atenção genuína, seu corpo relaxa a postura de quem está por perto, e isso comunica, sem palavras, "você pode confiar em mim".',
+    'A ironia é que essa gentileza aparente pode fazer as pessoas assumirem que você nunca discorda de nada ou nunca tem opinião forte — e quando você finalmente expressa um limite ou desacordo, algumas ficam genuinamente surpresas, como se isso "não combinasse" com quem elas achavam que você era.',
+    'Em primeiros encontros, isso te torna extremamente aproximável — estranhos se abrem com você rápido, contam coisas pessoais cedo. O risco é atrair gente que só quer usar você como ombro, sem interesse genuíno em reciprocidade.',
+    'Vale usar essa percepção a seu favor sendo mais claro, desde cedo, sobre onde estão seus próprios limites — isso não quebra a gentileza que as pessoas veem em você, só a torna mais sustentável a longo prazo.'
+  ],
+  3:[
+    'Quem te conhece de fora te vê como alguém animado e criativo, a pessoa que ilumina a sala quando entra. Sua energia social é imediatamente perceptível, mesmo em ambientes onde você não conhece ninguém.',
+    'Isso acontece porque sua expressividade natural — no jeito de falar, gesticular, reagir — comunica entusiasmo genuíno, e as pessoas gravitam instintivamente na direção de quem parece estar se divertindo de verdade.',
+    'A ironia é que essa energia vibrante pode esconder dias em que você não está bem — as pessoas raramente imaginam que "aquela pessoa tão animada" também tem baixa, porque a expectativa social já te encaixou no papel de quem sempre traz leveza.',
+    'Em primeiros encontros, isso te torna extremamente memorável — você é a pessoa que todo mundo lembra da festa. O risco é ser visto como superficial demais, alguém "só de diversão", sem substância pra conversas mais sérias.',
+    'Vale usar essa percepção a seu favor sem deixar que ela apague sua profundidade real — mostrar que você também tem camadas mais quietas e pensativas amplia como as pessoas te enxergam, sem perder o brilho que já é naturalmente seu.'
+  ],
+  4:[
+    'Quem te conhece de fora te vê como alguém confiável e sério — o tipo de pessoa que todo mundo chama quando precisa de ajuda de verdade, não só de companhia casual.',
+    'Isso acontece porque sua presença comunica estabilidade — a forma como você fala com cuidado antes de prometer algo, a consistência no seu comportamento ao longo do tempo, tudo isso constrói confiança quase automática nas pessoas ao redor.',
+    'A ironia é que essa imagem de solidez pode fazer as pessoas esquecerem que você também precisa de suporte — "fulano dá conta de tudo" é um elogio que, com o tempo, vira desculpa pros outros nunca perguntarem como você está.',
+    'Em primeiros encontros, isso te dá credibilidade instantânea — as pessoas confiam em você mais rápido que na maioria. O risco é ser visto como rígido demais, sem espontaneidade, "chato" pros padrões de quem busca leveza casual.',
+    'Vale usar essa percepção a seu favor deixando pequenas fissuras aparecerem — mostrar leveza ocasional, admitir cansaço quando existe, torna sua imagem sólida ainda mais respeitada, porque prova que é real, não só fachada.'
+  ],
+  5:[
+    'Quem te conhece de fora te vê como alguém magnético e imprevisível — nunca se sabe totalmente o que esperar de você, e isso, longe de afastar, geralmente atrai curiosidade genuína das pessoas ao redor.',
+    'Isso acontece porque sua energia comunica movimento — você fala rápido, muda de assunto com facilidade, tem um brilho nos olhos quando algo novo aparece, e isso sinaliza pras pessoas que estar perto de você nunca vai ser monótono.',
+    'A ironia é que esse magnetismo pode ser mal interpretado como falta de compromisso ou profundidade — as pessoas assumem que você não vai ficar, mesmo quando, naquele momento específico, você está genuinamente presente e interessado.',
+    'Em primeiros encontros, isso te torna extremamente atraente e memorável — poucas pessoas esquecem de você depois de um encontro só. O risco é ser visto como alguém "difícil de prender", o que pode afastar quem busca relação de longo prazo antes mesmo de te dar chance.',
+    'Vale usar essa percepção a seu favor deixando claro, em palavras, quando seu interesse é real e duradouro — sua energia já cativa sozinha; um pouco de clareza verbal evita que ela seja mal interpretada como volatilidade.'
+  ],
+  6:[
+    'Quem te conhece de fora te vê como alguém acolhedor, quase maternal ou paternal, mesmo que por dentro você também precise de colo com frequência. As pessoas se sentem cuidadas só de estar perto de você.',
+    'Isso acontece porque sua presença comunica atenção genuína ao bem-estar alheio — você pergunta, se lembra de detalhes, oferece ajuda antes de ser pedida, e isso cria confiança quase instantânea de que você é "gente boa de verdade".',
+    'A ironia é que essa energia de cuidado pode fazer as pessoas esquecerem completamente de retribuir — "fulano sempre cuida de todo mundo" vira desculpa coletiva pra ninguém perguntar como você está, mesmo quando você mais precisaria disso.',
+    'Em primeiros encontros, isso te torna extremamente confiável e fácil de se abrir com — estranhos sentem que podem contar coisas pessoais rápido. O risco é atrair gente que só busca em você suporte emocional, sem interesse genuíno em reciprocidade.',
+    'Vale usar essa percepção a seu favor sendo mais direto sobre suas próprias necessidades — as pessoas que genuinamente se importam vão responder bem; as que só usavam seu cuidado vão se revelar pela reação.'
+  ],
+  7:[
+    'Quem te conhece de fora te vê como alguém reservado e observador — meio "difícil de decifrar" à primeira vista, o tipo de pessoa sobre quem todo mundo tem curiosidade, mas poucos sentem que realmente conhecem.',
+    'Isso acontece porque sua energia comunica processamento interno constante — você observa mais do que fala em grupos, escolhe as palavras com cuidado, e isso sinaliza profundidade, mesmo antes de qualquer conversa mais séria acontecer.',
+    'A ironia é que essa reserva natural pode ser mal interpretada como frieza ou desinteresse — as pessoas às vezes assumem que você não se importa, quando na real você só precisa de mais tempo e mais confiança antes de se abrir de verdade.',
+    'Em primeiros encontros, isso gera um mistério que atrai curiosidade genuína — as pessoas querem entender o que se passa atrás do seu silêncio. O risco é parecer inacessível demais, afastando quem desiste antes de ter paciência suficiente pra chegar até você.',
+    'Vale usar essa percepção a seu favor oferecendo, de vez em quando, pequenas janelas voluntárias pra dentro — você não precisa se abrir por completo rápido, mas gestos pequenos de proximidade já suavizam a distância que as pessoas sentem à primeira vista.'
+  ],
+  8:[
+    'Quem te conhece de fora te vê como alguém poderoso e capaz — passa a impressão de que sempre sabe o que está fazendo, mesmo em momentos de real incerteza interna.',
+    'Isso acontece porque sua presença comunica autoridade natural — postura ereta, tom de voz firme, decisões tomadas sem hesitação visível, tudo isso sinaliza competência antes mesmo de qualquer prova concreta.',
+    'A ironia é que essa imagem de força pode isolar você exatamente nos momentos em que mais precisaria de apoio — ninguém oferece ajuda a quem "claramente" tem tudo sob controle, mesmo quando essa pessoa está exausta por dentro.',
+    'Em primeiros encontros, isso te dá respeito e credibilidade quase automáticos — as pessoas te levam a sério rápido, em ambientes profissionais especialmente. O risco é ser visto como intimidador ou inacessível, afastando quem tem menos confiança pra se aproximar.',
+    'Vale usar essa percepção a seu favor mostrando, seletivamente, momentos de vulnerabilidade real — isso não diminui o respeito que as pessoas já têm por você, na verdade aprofunda a conexão pra além da admiração à distância.'
+  ],
+  9:[
+    'Quem te conhece de fora te vê como alguém sábio e generoso, o tipo de pessoa a quem os outros recorrem em momentos difíceis, mesmo em relações relativamente recentes.',
+    'Isso acontece porque sua presença comunica amplitude — você parece enxergar o quadro geral, ouvir sem julgar, e isso faz as pessoas sentirem que suas próprias questões parecem menores, mais administráveis, quando compartilhadas com você.',
+    'A ironia é que essa sabedoria percebida pode fazer as pessoas esquecerem que você também tem dúvidas e feridas próprias — "fulano sempre sabe o que dizer" é um elogio que raramente vem acompanhado da pergunta "e você, como está?".',
+    'Em primeiros encontros, isso te torna alguém em quem se confia rápido, quase um porto seguro instantâneo. O risco é ser reduzido ao papel de conselheiro permanente, sem espaço pra também ser visto como alguém com necessidades próprias.',
+    'Vale usar essa percepção a seu favor permitindo que as pessoas vejam também seus próprios desafios — isso não diminui sua sabedoria percebida, na verdade a torna mais humana e acessível.'
+  ],
+  11:[
+    'Quem te conhece de fora sente algo diferente em você — uma sensibilidade ou intuição fora do comum, mesmo sem saber nomear exatamente o quê. As pessoas frequentemente descrevem você como "único" sem conseguir explicar bem o porquê.',
+    'Isso acontece porque sua energia carrega uma qualidade quase palpável de percepção — você reage a nuances que a maioria não nota, e isso, mesmo silenciosamente, comunica que existe mais acontecendo em você do que na superfície.',
+    'A ironia é que essa sensibilidade perceptível pode intimidar antes mesmo de qualquer palavra ser trocada — algumas pessoas sentem que você "enxerga através delas", o que gera tanto fascínio quanto desconforto instintivo em quem prefere manter distância emocional.',
+    'Em primeiros encontros, isso cria uma curiosidade quase magnética — as pessoas querem entender o que há de diferente em você. O risco é ser visto como estranho ou difícil de categorizar, o que afasta quem busca conexões mais convencionais.',
+    'Vale usar essa percepção a seu favor não escondendo sua sensibilidade por medo de parecer "esquisito" — as pessoas certas pra você são exatamente as que se sentem atraídas, não afastadas, por essa diferença perceptível.'
+  ],
+  22:[
+    'Quem te conhece de fora te vê como alguém com potencial enorme, quase um "essa pessoa vai longe" instintivo — e, com o tempo, as pessoas ao redor costumam confirmar que não estavam erradas.',
+    'Isso acontece porque sua presença comunica visão de futuro — a forma como você fala de planos, a escala do que imagina, tudo isso sinaliza ambição real, não apenas sonho vago, mesmo antes de qualquer resultado concreto aparecer.',
+    'A ironia é que essa expectativa de grandeza pode pesar sobre você mais do que ajuda — as pessoas esperam tanto de você que qualquer passo comum, qualquer momento de dúvida ou lentidão, parece desproporcionalmente decepcionante aos olhos alheios.',
+    'Em primeiros encontros, isso te torna alguém em quem as pessoas investem confiança rápido, antecipando o que você ainda vai construir. O risco é a pressão constante de "estar à altura" de uma expectativa que nem sempre foi sua escolha carregar.',
+    'Vale usar essa percepção a seu favor sendo transparente sobre o processo, não só sobre a visão final — mostrar os passos reais (inclusive os incertos) torna sua grandiosidade percebida mais sustentável e menos solitária.'
+  ],
+  33:[
+    'Quem te conhece de fora te vê como alguém que cuida sem cobrar nada em troca — presença rara, difícil de esquecer, do tipo que as pessoas descrevem anos depois como "alguém que mudou algo em mim".',
+    'Isso acontece porque sua energia combina calor humano genuíno com uma profundidade que a maioria das pessoas sente, mesmo sem entender de onde vem — você escuta de um jeito que faz o outro se sentir realmente visto, não só ouvido.',
+    'A ironia é que essa generosidade de presença pode fazer as pessoas assumirem automaticamente que você está sempre bem, sempre disponível, sempre com energia pra dar — e raramente alguém pensa em perguntar se você também precisa receber esse mesmo cuidado de volta.',
+    'Em primeiros encontros, você deixa uma marca emocional que poucas pessoas conseguem deixar — é comum ser lembrado muito depois de um encontro breve. O risco é ser reduzido ao papel de "cuidador de todos", sem espaço reservado pra suas próprias necessidades serem vistas.',
+    'Vale usar essa percepção a seu favor permitindo que as pessoas mais próximas vejam também seu cansaço, sua necessidade de pausa — isso não diminui sua presença especial, apenas a torna sustentável a longo prazo, pra você e pra quem depende dela.'
+  ]
+};
+
+/* ---- Conteúdo das camadas avançadas (painel profissional) ---- */
+const KARMIC_TEXT = {
+  1:'Lição cármica: desenvolver iniciativa e autoconfiança. A pessoa provavelmente evitou assumir liderança em vidas/fases anteriores, e agora precisa aprender a agir por conta própria.',
+  2:'Lição cármica: desenvolver paciência e cooperação. Pode ter dificuldade genuína em trabalhar em equipe ou considerar o ritmo alheio antes de agir.',
+  3:'Lição cármica: desenvolver expressão e otimismo. Tende a reprimir a própria criatividade ou visão de mundo mais alegre, mesmo quando isso pesa por dentro.',
+  4:'Lição cármica: desenvolver disciplina e organização. Pode ter histórico de começar muito e não sustentar estrutura suficiente pra terminar.',
+  5:'Lição cármica: desenvolver adaptabilidade e uso responsável da liberdade. Tende a resistir a mudanças necessárias, mesmo quando o próprio crescimento pede isso.',
+  6:'Lição cármica: desenvolver senso de responsabilidade com o outro. Pode evitar compromissos afetivos ou familiares mais profundos.',
+  7:'Lição cármica: desenvolver confiança e fé, inclusive na própria intuição. Tende à desconfiança e ao ceticismo excessivo diante do que não pode provar.',
+  8:'Lição cármica: desenvolver relação saudável com poder e dinheiro. Pode alternar entre evitar ambição por completo ou perseguir resultado de forma desequilibrada.',
+  9:'Lição cármica: desenvolver compaixão e visão além de si mesmo. Tende ao individualismo, mesmo sem essa ser a intenção consciente.'
+};
+const REALIZACAO_TEXT = {
+  1:'Nos anos de maturidade em diante, o objetivo de vida se volta pra liderança e independência — projetos próprios ganham mais peso que qualquer papel de apoio.',
+  2:'Nos anos de maturidade em diante, o objetivo de vida se volta pra parceria e diplomacia — mediar, unir, colaborar se torna o papel mais significativo.',
+  3:'Nos anos de maturidade em diante, o objetivo de vida se volta pra expressão criativa — comunicar, criar ou ensinar ganham prioridade central.',
+  4:'Nos anos de maturidade em diante, o objetivo de vida se volta pra construção de legado prático — deixar algo estruturado e útil pras próximas gerações.',
+  5:'Nos anos de maturidade em diante, o objetivo de vida se volta pra liberdade com propósito — usar a experiência acumulada pra inspirar mudança em outros.',
+  6:'Nos anos de maturidade em diante, o objetivo de vida se volta pra cuidado em escala — família, comunidade, ou causas de proteção ao próximo.',
+  7:'Nos anos de maturidade em diante, o objetivo de vida se volta pra sabedoria compartilhada — ensinar o que levou a vida inteira pra entender.',
+  8:'Nos anos de maturidade em diante, o objetivo de vida se volta pra legado material generoso — usar recursos conquistados pra abrir caminho a outros.',
+  9:'Nos anos de maturidade em diante, o objetivo de vida se volta pra serviço universal — causas e impacto que ultrapassam o círculo pessoal.',
+  11:'Nos anos de maturidade em diante, o objetivo de vida se volta pra inspiração espiritual — guiar outros através da própria sensibilidade refinada.',
+  22:'Nos anos de maturidade em diante, o objetivo de vida se volta pra construção de legado em grande escala, com impacto que ultrapassa a própria vida.',
+  33:'Nos anos de maturidade em diante, o objetivo de vida se volta pro cuidado e ensino em nível quase universal, coroando uma vida de entrega.'
+};
+const DESEJO_OCULTO_TEXT = {
+  1:'Por trás da imagem pública, existe um desejo oculto de ser o primeiro, de se destacar por mérito próprio — mesmo quando a pessoa demonstra modéstia na superfície.',
+  2:'Por trás da imagem pública, existe um desejo oculto de harmonia profunda nas relações mais próximas — mesmo quando a pessoa parece independente na superfície.',
+  3:'Por trás da imagem pública, existe um desejo oculto de ser celebrado pela própria criatividade — mesmo quando a pessoa minimiza o próprio talento.',
+  4:'Por trás da imagem pública, existe um desejo oculto de ordem e controle sobre o próprio ambiente — mesmo quando a pessoa parece flexível na superfície.',
+  5:'Por trás da imagem pública, existe um desejo oculto de escapar de qualquer rotina — mesmo quando a pessoa parece adaptada a uma vida estruturada.',
+  6:'Por trás da imagem pública, existe um desejo oculto de ser necessário e insubstituível pra quem ama — mesmo quando demonstra independência emocional.',
+  7:'Por trás da imagem pública, existe um desejo oculto de ser reconhecido como sábio ou especial — mesmo quando evita holofote deliberadamente.',
+  8:'Por trás da imagem pública, existe um desejo oculto de poder e reconhecimento material — mesmo quando a pessoa minimiza a própria ambição em público.',
+  9:'Por trás da imagem pública, existe um desejo oculto de ser lembrado por um legado de bondade — mesmo quando age com discrição.'
+};
+const DESAFIO_TEXT = {
+  0:'Desafio do "zero": a lição envolve todos os outros números ao mesmo tempo — a vida cobra versatilidade e ausência de atalho fácil.',
+  1:'Desafio de afirmar a própria individualidade sem depender de aprovação alheia, e sem cair em teimosia ou isolamento pra fazer isso.',
+  2:'Desafio de desenvolver confiança nas próprias percepções, sem se apagar diante da opinião ou vontade dos outros.',
+  3:'Desafio de expressar sentimentos e criatividade sem medo de julgamento, superando tendência a esconder o que sente por trás de humor ou dispersão.',
+  4:'Desafio de construir disciplina e estrutura sem virar rígido ou controlador demais no processo.',
+  5:'Desafio de usar a liberdade com responsabilidade, sem cair em excesso, impulsividade ou fuga de compromisso.',
+  6:'Desafio de equilibrar responsabilidade com os outros e consigo mesmo, sem virar controlador ou se sacrificar em excesso.',
+  7:'Desafio de confiar — em si, nos outros, na vida — sem deixar o ceticismo racional virar isolamento emocional permanente.',
+  8:'Desafio de lidar com poder, dinheiro e ambição de forma equilibrada, sem deixar isso comprometer relações importantes.'
+};
+const PINNACLE_TEXT = {
+  1:'Período de afirmação pessoal e novos começos — decisões tomadas aqui tendem a exigir coragem e iniciativa própria.',
+  2:'Período de parcerias e cooperação — os melhores resultados vêm de colaboração, não de empreitadas solo.',
+  3:'Período de expressão e vida social ativa — expansão criativa e reconhecimento público tendem a se concentrar aqui.',
+  4:'Período de trabalho duro e construção de base — os frutos desse ciclo dependem diretamente do esforço aplicado nele.',
+  5:'Período de mudança e liberdade — viagens, mudanças de direção e experiências novas marcam essa fase.',
+  6:'Período centrado em família, responsabilidade e cuidado — decisões importantes sobre lar e relações se concentram aqui.',
+  7:'Período de introspecção e aprofundamento — estudo, espiritualidade e busca de sentido ganham protagonismo.',
+  8:'Período de conquista material e reconhecimento profissional — as maiores realizações financeiras tendem a se concentrar aqui.',
+  9:'Período de conclusão e generosidade — ciclos se fecham, e o foco se volta pra contribuição além de si mesmo.',
+  11:'Período de intensa sensibilidade e inspiração — decisões guiadas por intuição tendem a se provar corretas nesse ciclo.',
+  22:'Período de grandes construções — projetos de impacto amplo encontram as melhores condições de se concretizar aqui.',
+  33:'Período de cuidado e ensino em escala — esse ciclo tende a exigir e recompensar generosidade acima da média.'
+};
+
+const NUM_LABELS = { life:'Caminho de Vida', destiny:'Destino', soul:'Alma', personality:'Personalidade' };
+
+const LIFE_ESSENCE = {
+  1:'abrir caminhos novos e liderar com iniciativa própria', 2:'construir pontes onde os outros só veem divisão',
+  3:'expressar em voz alta o que a maioria guarda em silêncio', 4:'construir estruturas que resistem ao tempo',
+  5:'experimentar o mundo em vez de só observá-lo', 6:'cuidar de quem está por perto como se fosse extensão de si',
+  7:'buscar a verdade por trás de tudo que parece óbvio demais', 8:'transformar ambição em resultado concreto e mensurável',
+  9:'servir causas maiores que a própria vida individual', 11:'ser canal de intuições que ainda não têm nome',
+  22:'transformar visão coletiva em construção real', 33:'ensinar e curar em escala, mesmo ao custo de si mesmo'
+};
+const DESTINY_ESSENCE = {
+  1:'liderança direta e autonomia total sobre o próprio trabalho', 2:'parcerias onde duas forças se completam',
+  3:'criação e comunicação em qualquer formato possível', 4:'construção metódica de algo sólido e duradouro',
+  5:'variedade constante de projetos e experiências', 6:'cuidado, ensino ou serviço direto a outras pessoas',
+  7:'pesquisa e aprofundamento intelectual ou espiritual', 8:'negócios, gestão e resultado financeiro tangível',
+  9:'causas sociais e trabalho de impacto coletivo', 11:'inspiração através de arte, ideia ou espiritualidade',
+  22:'legado construído em grande escala', 33:'ensino e cura em nível coletivo'
+};
+const SOUL_ESSENCE = {
+  1:'ser reconhecido por conta própria, sem depender de ninguém', 2:'paz e conexão verdadeira acima de estar certo',
+  3:'ser visto e ouvido de verdade', 4:'segurança e uma base sólida onde se apoiar',
+  5:'liberdade acima de quase tudo', 6:'pertencer e cuidar de quem ama',
+  7:'entender a verdade por trás das coisas', 8:'reconhecimento por conquista real',
+  9:'fazer diferença em algo maior que a própria vida', 11:'significado espiritual em tudo que faz',
+  22:'ver sonhos grandes virarem realidade concreta', 33:'aliviar o sofrimento alheio de forma profunda'
+};
+const PERSONALITY_ESSENCE = {
+  1:'confiante e decidido', 2:'gentil e fácil de se aproximar', 3:'animado e criativo', 4:'confiável e sério',
+  5:'magnético e imprevisível', 6:'acolhedor, quase maternal', 7:'reservado e observador', 8:'poderoso e capaz',
+  9:'sábio e generoso', 11:'diferente, de um jeito difícil de nomear', 22:'cheio de potencial, alguém que "vai longe"',
+  33:'raro, do tipo que as pessoas não esquecem'
+};
+
+const TRAIT_BLOCKS = {
+  1:{ onPoint:[{l:'INICIATIVA',d:'Começa sem esperar permissão de ninguém'},{l:'VISÃO',d:'Enxerga o destino antes dos outros verem o caminho'},{l:'CORAGEM',d:'Não recua diante do risco de errar sozinho'}],
+      tooMuch:[{l:'CONTROLE',d:'Dificuldade real de delegar ou dividir decisão'},{l:'TEIMOSIA',d:'Convicção que vira resistência a qualquer contraponto'},{l:'IMPACIÊNCIA',d:'Pouca tolerância com ritmo mais lento que o seu'}],
+      notEnough:[{l:'PEDIR AJUDA',d:'Raramente admite que precisa de apoio'},{l:'ESCUTA',d:'Prioriza a própria visão antes de ouvir outra'},{l:'FLEXIBILIDADE',d:'Dificuldade de aceitar plano B'}] },
+  2:{ onPoint:[{l:'EMPATIA',d:'Sente o clima antes de qualquer palavra ser dita'},{l:'MEDIAÇÃO',d:'Talento raro de aproximar lados opostos'},{l:'LEALDADE',d:'É de quem fica, não de quem some no atrito'}],
+      tooMuch:[{l:'ACOMODAÇÃO',d:'Abre mão da própria vontade fácil demais'},{l:'DEPENDÊNCIA EMOCIONAL',d:'Busca aprovação externa em excesso'},{l:'EVITAÇÃO',d:'Foge de confronto mesmo quando necessário'}],
+      notEnough:[{l:'ASSERTIVIDADE',d:'Dificuldade de dizer não sem culpa'},{l:'AUTOPRIORIDADE',d:'Coloca o outro na frente quase sempre'},{l:'LIMITES',d:'Poucas fronteiras claras nas relações'}] },
+  3:{ onPoint:[{l:'CRIATIVIDADE',d:'Ideias nascem com facilidade quase natural'},{l:'CARISMA',d:'Atrai atenção sem esforço consciente'},{l:'EXPRESSIVIDADE',d:'Comunica com energia contagiante'}],
+      tooMuch:[{l:'DISPERSÃO',d:'Começa muito, termina pouco'},{l:'DRAMA',d:'Pequenas coisas ganham peso desproporcional'},{l:'IMPULSIVIDADE',d:'Fala ou decide antes de pensar bem'}],
+      notEnough:[{l:'FOCO',d:'Falta constância pra ir até o fim'},{l:'DISCIPLINA',d:'Estrutura ainda é seu ponto fraco'},{l:'PACIÊNCIA',d:'Tédio chega rápido demais'}] },
+  4:{ onPoint:[{l:'DISCIPLINA',d:'Não depende de motivação pra continuar'},{l:'CONFIABILIDADE',d:'Sua palavra vale o que promete'},{l:'ORGANIZAÇÃO',d:'Transforma caos em sistema funcional'}],
+      tooMuch:[{l:'RIGIDEZ',d:'Resiste a mudanças mesmo quando necessárias'},{l:'CONTROLE',d:'Dificuldade de soltar o próprio método'},{l:'SERIEDADE',d:'Pouco espaço pra leveza ou improviso'}],
+      notEnough:[{l:'FLEXIBILIDADE',d:'Imprevisto ainda assusta mais do que deveria'},{l:'ESPONTANEIDADE',d:'Planejamento em excesso, pouco improviso'},{l:'DESCANSO',d:'Dificuldade real de desligar do "fazer"'}] },
+  5:{ onPoint:[{l:'ADAPTABILIDADE',d:'Se reinventa onde outros travam'},{l:'MAGNETISMO',d:'Curiosidade que contagia quem está por perto'},{l:'CORAGEM',d:'Recomeça quantas vezes for preciso'}],
+      tooMuch:[{l:'INQUIETAÇÃO',d:'Dificuldade real de ficar parado'},{l:'IMPULSIVIDADE',d:'Decide rápido demais, sem medir consequência'},{l:'FUGA',d:'Sai antes de dar chance pro compromisso dar certo'}],
+      notEnough:[{l:'COMPROMISSO',d:'Raiz ainda soa como ameaça, não segurança'},{l:'CONSTÂNCIA',d:'Dificuldade de sustentar rotina por muito tempo'},{l:'PACIÊNCIA',d:'Quer resultado rápido demais'}] },
+  6:{ onPoint:[{l:'CUIDADO',d:'Genuíno, sem cobrar nada em troca'},{l:'RESPONSABILIDADE',d:'Inspira confiança quase imediata'},{l:'ACOLHIMENTO',d:'Cria ambientes onde os outros se sentem seguros'}],
+      tooMuch:[{l:'MARTÍRIO',d:'Se esquece de si cuidando demais do outro'},{l:'CONTROLE',d:'Preocupação vira necessidade de supervisionar tudo'},{l:'COBRANÇA SILENCIOSA',d:'Ressentimento acumulado por não pedir de volta'}],
+      notEnough:[{l:'AUTOCUIDADO',d:'Raramente aplica em si o cuidado que oferece'},{l:'LIMITES',d:'Dificuldade de dizer não a pedidos de ajuda'},{l:'RECEBER',d:'Desconforto em aceitar cuidado alheio'}] },
+  7:{ onPoint:[{l:'PROFUNDIDADE',d:'Enxerga padrões que passam despercebidos'},{l:'ANÁLISE',d:'Raciocínio afiado, fora da curva'},{l:'INTUIÇÃO',d:'Refinada por anos de observação silenciosa'}],
+      tooMuch:[{l:'ISOLAMENTO',d:'Solitude vira desconexão real das pessoas'},{l:'DESCONFIANÇA',d:'Afasta gente boa antes de dar chance'},{l:'CETICISMO',d:'Questiona até o que já foi provado'}],
+      notEnough:[{l:'VULNERABILIDADE',d:'Dificuldade real de se abrir emocionalmente'},{l:'CONFIANÇA',d:'Precisa de muita prova antes de relaxar'},{l:'ESPONTANEIDADE',d:'Tudo passa primeiro pela análise'}] },
+  8:{ onPoint:[{l:'VISÃO ESTRATÉGICA',d:'Enxerga o longo prazo com clareza rara'},{l:'EXECUÇÃO',d:'Não só sonha grande, constrói grande'},{l:'RESILIÊNCIA',d:'Obstáculo é dado, não motivo de desistência'}],
+      tooMuch:[{l:'AMBIÇÃO SEM FREIO',d:'Resultado acima da relação, às vezes'},{l:'CONTROLE',d:'Dificuldade de soltar as rédeas'},{l:'FRIEZA',d:'Prioriza eficiência acima do vínculo'}],
+      notEnough:[{l:'VULNERABILIDADE',d:'Raramente mostra o lado inseguro'},{l:'DELEGAÇÃO',d:'Confia pouco no trabalho alheio'},{l:'PAUSA',d:'Descansar soa como perda de tempo'}] },
+  9:{ onPoint:[{l:'COMPAIXÃO',d:'Genuína, sem cálculo por trás'},{l:'VISÃO AMPLA',d:'Enxerga o quadro geral onde outros veem só o problema'},{l:'GENEROSIDADE',d:'Inspira quem está por perto a também dar mais'}],
+      tooMuch:[{l:'SACRIFÍCIO',d:'Dá tanto de si que sobra pouco'},{l:'IDEALISMO',d:'Expectativa alta demais sobre o mundo'},{l:'MÁGOA SILENCIOSA',d:'Acumula ressentimento em vez de cobrar'}],
+      notEnough:[{l:'DESAPEGO',d:'Dificuldade de soltar o que já cumpriu ciclo'},{l:'AUTOCUIDADO',d:'Cuida do mundo antes de cuidar de si'},{l:'LIMITES',d:'Generosidade sem filtro claro'}] },
+  11:{ onPoint:[{l:'SENSIBILIDADE',d:'Percebe o que ainda não virou linguagem'},{l:'INSPIRAÇÃO',d:'Move gente só pela presença'},{l:'VISÃO',d:'Enxerga possibilidade onde a maioria vê limite'}],
+      tooMuch:[{l:'ANSIEDADE',d:'Sente demais, o tempo todo'},{l:'AUTOCRÍTICA',d:'Julgamento interno severo e constante'},{l:'SOBRECARGA',d:'Absorve emoção alheia sem filtro'}],
+      notEnough:[{l:'ESTRUTURA',d:'Dificuldade de dar corpo prático à intuição'},{l:'ATERRAMENTO',d:'Vive mais na ideia do que no concreto'},{l:'DESCANSO EMOCIONAL',d:'Raramente desliga da própria sensibilidade'}] },
+  22:{ onPoint:[{l:'VISÃO PRÁTICA',d:'Combina sonho grande com execução real'},{l:'DISCIPLINA EM ESCALA',d:'Aguenta o tempo longo de grandes projetos'},{l:'LIDERANÇA',d:'Natural em empreitadas de impacto'}],
+      tooMuch:[{l:'PRESSÃO INTERNA',d:'Cobrança constante de fazer algo grandioso'},{l:'PERFECCIONISMO',d:'Nada parece suficiente perto da visão'},{l:'SOBRECARGA',d:'Assume responsabilidade além da conta'}],
+      notEnough:[{l:'PACIÊNCIA',d:'Passos pequenos parecem insuficientes'},{l:'CELEBRAÇÃO',d:'Raramente reconhece a própria conquista no caminho'},{l:'LEVEZA',d:'Tudo carrega peso de "grande projeto"'}] },
+  33:{ onPoint:[{l:'CUIDADO EM ESCALA',d:'Alcança além do círculo próximo'},{l:'SABEDORIA',d:'Combina intuição com capacidade de construção'},{l:'PRESENÇA',d:'Marca quem passa por perto'}],
+      tooMuch:[{l:'AUTOESQUECIMENTO',d:'Se coloca sempre por último'},{l:'SOBRECARGA',d:'Entrega além do sustentável'},{l:'EXAUSTÃO SILENCIOSA',d:'Segue mesmo esgotado, sem avisar'}],
+      notEnough:[{l:'RECEBER CUIDADO',d:'Dificuldade real de aceitar ajuda'},{l:'LIMITES',d:'Poucas fronteiras de proteção própria'},{l:'DESCANSO',d:'Raramente para de verdade'}] }
+};
+
+function buildOverview(person){
+  const firstName = person.nome.split(' ')[0];
+  const life = LIFE_ESSENCE[person.life];
+  const destiny = DESTINY_ESSENCE[person.destiny];
+  const soul = SOUL_ESSENCE[person.soul];
+  const personality = PERSONALITY_ESSENCE[person.personality];
+  // varia o template com base na soma dos números, pra não parecer sempre a mesma frase pra pessoas diferentes
+  const variant = (person.life + person.destiny + person.soul + person.personality) % 3;
+  if(variant === 0){
+    return `${firstName} está aqui para ${life}, buscando ${soul} através de ${destiny} — e é visto por fora como alguém ${personality}.`;
+  } else if(variant === 1){
+    return `No fundo, ${firstName} busca ${soul}. A vida cobra de ${firstName} a missão de ${life}, com realização real vindo de ${destiny}. Por fora, é visto como alguém ${personality}.`;
+  } else {
+    return `${firstName} é, por fora, alguém ${personality} — mas por dentro, o que move de verdade é ${soul}. Sua missão de vida é ${life}, e ela se concretiza através de ${destiny}.`;
+  }
+}
+
+const CYCLE_TEXT = {
+  youth: {
+    1:'Seus anos de formação giram em torno de aprender a se afirmar e tomar iniciativa própria, mesmo quando isso significava ir contra o que os outros esperavam de você.',
+    2:'Formação marcada por aprender cooperação, paciência e o valor da parceria — muitas vezes em segundo plano, apoiando outros antes de ter seu próprio protagonismo reconhecido.',
+    3:'Formação em torno da própria expressão — descobrir talento criativo, encontrar voz própria, aprender que criar não é frivolidade, é vocação real.',
+    4:'Formação marcada por construir disciplina e estrutura — aprender, muitas vezes da forma mais difícil, o valor de terminar o que se começa.',
+    5:'Formação marcada por experimentação — múltiplos interesses, mudanças de direção, a necessidade de provar vários caminhos antes de escolher um.',
+    6:'Formação marcada por responsabilidade precoce com família ou comunidade — aprender a cuidar antes mesmo de ter certeza de que estava pronto para isso.',
+    7:'Formação marcada por introspecção precoce — tempo sozinho, estudo profundo, a descoberta de que sua mente processa o mundo diferente da maioria.',
+    8:'Formação marcada por ambição precoce e primeiro contato com responsabilidade financeira ou de resultado — aprender cedo que esforço se traduz em conquista.',
+    9:'Formação marcada por sensibilidade precoce a causas maiores — a percepção, ainda jovem, de que o mundo precisa de mais compaixão do que recebe.',
+    11:'Formação marcada por sensibilidade intensa, às vezes difícil de administrar — sonhos vívidos, intuições fortes, uma percepção de mundo que os colegas não compartilhavam.',
+    22:'Formação marcada por ambição grande demais pra idade — visões de impacto coletivo que pareciam distantes da realidade prática de um jovem.',
+    33:'Formação marcada por um chamado precoce pra cuidar — muitas vezes assumindo responsabilidade emocional por outros antes da idade ideal para isso.'
+  },
+  maturity: {
+    1:'Sua fase de maior potência profissional pede liderança e autonomia — é o período em que suas melhores conquistas nascem de decisões tomadas por conta própria, sem esperar aprovação alheia.',
+    2:'Fase de maior potência através de parcerias sólidas — negócios em dupla, colaborações estratégicas, papéis de mediação que geram resultado real.',
+    3:'Fase de maior potência quando sua criatividade encontra plataforma e audiência — é o período de maior visibilidade e reconhecimento pelo seu talento de comunicar.',
+    4:'Fase de maior potência através de trabalho consistente e metódico — é o período em que a estrutura que você construiu pacientemente paga o dividendo mais alto.',
+    5:'Fase de maior potência em ambientes de movimento e variedade — é o período de maior expansão, viagens, mudanças que trazem crescimento real.',
+    6:'Fase de maior potência em papéis de cuidado e liderança comunitária — é o período em que construir família, casa ou legado de serviço traz mais realização.',
+    7:'Fase de maior potência através de especialização e conhecimento profundo — é o período em que sua expertise específica finalmente encontra reconhecimento.',
+    8:'Fase de maior potência material e profissional — é o período de maior conquista financeira, de negócios, de posição de autoridade.',
+    9:'Fase de maior potência através de trabalho com propósito e impacto social — é o período em que sua generosidade encontra escala real de alcance.',
+    11:'Fase de maior potência quando sua intuição encontra canal de expressão real — arte, espiritualidade, ideias que inspiram e movem outras pessoas.',
+    22:'Fase de maior potência quando visão e execução finalmente se encontram — é o período das maiores construções concretas da sua vida, capazes de impactar muita gente.',
+    33:'Fase de maior potência em papéis de ensino e cura em larga escala — é o período de maior alcance do seu cuidado pelo mundo.'
+  },
+  harvest: {
+    1:'Na fase de colheita, sua sabedoria está em ensinar outros a confiarem na própria força, sem precisar mais provar nada a ninguém.',
+    2:'Na colheita, sua sabedoria está em unir pessoas e gerações, sendo o elo que conecta o que poderia estar fragmentado.',
+    3:'Na colheita, sua sabedoria está em transmitir o que aprendeu através da própria arte ou palavra, deixando um legado criativo que atravessa gerações.',
+    4:'Na colheita, sua sabedoria está em ser a base sólida pra quem vem depois, o alicerce que sustenta família ou comunidade.',
+    5:'Na colheita, sua sabedoria está em compartilhar a amplitude de experiências vividas, mostrando a outros que existe mais de um jeito certo de viver.',
+    6:'Na colheita, sua sabedoria está em ser o centro afetivo de várias gerações, o lugar pra onde todos voltam.',
+    7:'Na colheita, sua sabedoria está em compartilhar décadas de busca interior, tornando-se referência pra quem também busca profundidade.',
+    8:'Na colheita, sua sabedoria está em usar tudo que construiu pra abrir caminho pra outros, transformando poder acumulado em legado generoso.',
+    9:'Na colheita, sua sabedoria está em deixar um legado de generosidade que continua servindo o mundo mesmo depois que você parar de agir diretamente.',
+    11:'Na colheita, sua sabedoria está em ensinar outros a confiarem na própria intuição, validando o que antes parecia "estranho demais" nos outros.',
+    22:'Na colheita, sua sabedoria está em ver o legado construído continuar funcionando mesmo sem sua presença direta, sustentado pela estrutura que você ergueu.',
+    33:'Na colheita, sua sabedoria está em finalmente aceitar receber o cuidado que sempre ofereceu, coroando uma vida de entrega com merecido descanso.'
+  }
+};
+
+/* ================= ESTADO ================= */
+let currentPerson = null; // { nome, data, life, destiny, soul, personality }
+let compatInviter = null; // dados vindos de um link de convite
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function computePerson(nome, data){
+  return {
+    nome: nome,
+    data: data,
+    life: calcLifePath(data),
+    destiny: calcDestiny(nome),
+    soul: calcSoul(nome),
+    personality: calcPersonality(nome)
+  };
+}
+
+function submitCapture(){
+  const nome = document.getElementById('input-nome').value.trim();
+  const data = document.getElementById('input-data').value;
+  if(!nome || !data){ alert('Preenche seu nome completo e data de nascimento.'); return; }
+  currentPerson = computePerson(nome, data);
+  try{ localStorage.setItem('numerologia_person', JSON.stringify(currentPerson)); }catch(e){}
+  goTo('screen-lead-gate');
+}
+
+function renderResult(){
+  document.getElementById('result-name').textContent = currentPerson.nome.split(' ')[0] + ', seus números são:';
+  document.getElementById('overview-card').innerHTML = `<div class="oveyebrow">Visão geral</div><p>${buildOverview(currentPerson)}</p>`;
+  const grid = document.getElementById('numbers-grid');
+  grid.innerHTML = '';
+  ['life','destiny','soul','personality'].forEach(key=>{
+    const div = document.createElement('div');
+    div.className = 'number-card';
+    div.innerHTML = `<div class="num">${currentPerson[key]}</div><div class="label">${NUM_LABELS[key]}</div>`;
+    grid.appendChild(div);
+  });
+  const list = document.getElementById('interp-list');
+  list.innerHTML = '';
+
+  // Caminho de Vida — ensaio profundo em parágrafos
+  const lpParagraphs = LIFE_PATH_TEXT[currentPerson.life];
+  const lpTraits = TRAIT_BLOCKS[currentPerson.life];
+  const lpCard = document.createElement('div');
+  lpCard.className = 'interp-card';
+  lpCard.innerHTML = `
+    <div class="ihead"><span class="inum">${currentPerson.life}</span><span class="ititle">Caminho de Vida — sua missão</span></div>
+    ${lpParagraphs.map(p=>`<p style="margin-bottom:13px;">${p}</p>`).join('')}
+    <div class="traits-wrap">
+      <div class="trait-block onpoint">
+        <h4>✦ Pontos fortes</h4>
+        ${lpTraits.onPoint.map(t=>`<div class="trait-item"><b>${t.l}</b> — ${t.d}</div>`).join('')}
+      </div>
+      <div class="trait-block toomuch">
+        <h4>⚠ Você exagera em</h4>
+        ${lpTraits.tooMuch.map(t=>`<div class="trait-item"><b>${t.l}</b> — ${t.d}</div>`).join('')}
+      </div>
+      <div class="trait-block notenough">
+        <h4>◇ Precisa desenvolver</h4>
+        ${lpTraits.notEnough.map(t=>`<div class="trait-item"><b>${t.l}</b> — ${t.d}</div>`).join('')}
+      </div>
+    </div>
+  `;
+  list.appendChild(lpCard);
+
+  // Destino — ensaio profundo em parágrafos
+  const destinyParagraphs = DESTINY_TEXT[currentPerson.destiny];
+  const destinyCard = document.createElement('div');
+  destinyCard.className = 'interp-card';
+  destinyCard.innerHTML = `
+    <div class="ihead"><span class="inum">${currentPerson.destiny}</span><span class="ititle">Destino — sua realização</span></div>
+    ${destinyParagraphs.map(p=>`<p style="margin-bottom:13px;">${p}</p>`).join('')}
+  `;
+  list.appendChild(destinyCard);
+
+  // Alma — ensaio profundo em parágrafos
+  const soulParagraphs = SOUL_TEXT[currentPerson.soul];
+  const soulCard = document.createElement('div');
+  soulCard.className = 'interp-card';
+  soulCard.innerHTML = `
+    <div class="ihead"><span class="inum">${currentPerson.soul}</span><span class="ititle">Alma — seu desejo mais fundo</span></div>
+    ${soulParagraphs.map(p=>`<p style="margin-bottom:13px;">${p}</p>`).join('')}
+  `;
+  list.appendChild(soulCard);
+
+  // Personalidade — ensaio profundo em parágrafos
+  const personalityParagraphs = PERSONALITY_TEXT[currentPerson.personality];
+  const personalityCard = document.createElement('div');
+  personalityCard.className = 'interp-card';
+  personalityCard.innerHTML = `
+    <div class="ihead"><span class="inum">${currentPerson.personality}</span><span class="ititle">Personalidade — como te veem</span></div>
+    ${personalityParagraphs.map(p=>`<p style="margin-bottom:13px;">${p}</p>`).join('')}
+  `;
+  list.appendChild(personalityCard);
+}
+
+/* ================= LEAD ================= */
+const LEAD_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyh8j78z5zu9_Y4wTtg-JYrYrAf2t7scp_yuz9RnHOwpX0Pk_0-7QBNfUxU_fSufxw/exec';
+
+async function submitLead(){
+  const email = document.getElementById('lead-email').value.trim();
+  const whatsapp = document.getElementById('lead-whatsapp').value.trim();
+  if(!email || !whatsapp){ alert('Preenche e-mail e WhatsApp pra continuar.'); return; }
+  const btn = document.getElementById('lead-btn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+  try{
+    await fetch(LEAD_WEBHOOK_URL, {
+      method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({ nome: currentPerson.nome, email: email, whatsapp: whatsapp, origem: 'app-numerologia' })
+    });
+  }catch(e){}
+  try{ localStorage.setItem('numerologia_lead_captured', '1'); }catch(e){}
+  renderResult();
+  goTo('screen-result');
+}
+
+/* ================= CARTÃO COMPARTILHÁVEL ================= */
+function shareEncode(nome, data){
+  return btoa(unescape(encodeURIComponent(nome + '||' + data)));
+}
+function shareDecode(code){
+  try{
+    const [nome, data] = decodeURIComponent(escape(atob(code))).split('||');
+    return { nome, data };
+  }catch(e){ return null; }
+}
+
+/* ================= CICLOS DE VIDA ================= */
+function renderCycles(){
+  const c = calcCycles(currentPerson.data, currentPerson.life);
+  const stages = [
+    { key:'cycle1', label:'youth', title:'Juventude', range:`Do nascimento até os ${c.firstEnd}`, num:c.cycle1 },
+    { key:'cycle2', label:'maturity', title:'Maturidade', range:`Dos ${c.firstEnd} aos ${c.secondEnd}`, num:c.cycle2 },
+    { key:'cycle3', label:'harvest', title:'Colheita', range:`A partir dos ${c.secondEnd}`, num:c.cycle3 }
+  ];
+  const el = document.getElementById('cycles-list');
+  el.innerHTML = '';
+  stages.forEach(stage=>{
+    const card = document.createElement('div');
+    card.className = 'interp-card';
+    card.innerHTML = `
+      <div class="ihead"><span class="inum">${stage.num}</span><span class="ititle">${stage.title} · ${stage.range}</span></div>
+      <p>${CYCLE_TEXT[stage.label][stage.num]}</p>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function fillShareScreen(){
+  document.getElementById('share-num').textContent = currentPerson.life;
+  document.getElementById('share-name').textContent = currentPerson.nome;
+}
+function copyShareLink(){
+  const link = window.location.origin + window.location.pathname + '?ver=' + shareEncode(currentPerson.nome, currentPerson.data);
+  navigator.clipboard?.writeText(link).then(()=> alert('Link copiado! Cola nos Stories ou manda pra alguém.')).catch(()=>{
+    prompt('Copia esse link:', link);
+  });
+}
+
+/* ================= COMPATIBILIDADE ================= */
+function goToCompatInvite(){
+  const link = window.location.origin + window.location.pathname + '?convite=' + shareEncode(currentPerson.nome, currentPerson.data);
+  document.getElementById('compat-link-display').value = link;
+  goTo('screen-compat-invite');
+}
+function copyCompatLink(){
+  const val = document.getElementById('compat-link-display').value;
+  navigator.clipboard?.writeText(val).then(()=> alert('Link copiado! Manda pra pessoa.')).catch(()=>{
+    prompt('Copia esse link:', val);
+  });
+}
+
+function submitCompatSecond(){
+  const nome = document.getElementById('compat-nome').value.trim();
+  const data = document.getElementById('compat-data').value;
+  if(!nome || !data){ alert('Preenche seu nome completo e data de nascimento.'); return; }
+  const personB = computePerson(nome, data);
+  renderCompatResult(compatInviter, personB);
+  goTo('screen-compat-result');
+}
+
+const NUMBER_GROUPS = {
+  1:'A', 5:'A', 7:'A',
+  2:'B', 4:'B', 8:'B',
+  3:'C', 6:'C', 9:'C',
+  11:'M', 22:'M', 33:'M'
+};
+function compatibilityText(numA, numB){
+  if(numA === numB){
+    return { score:'Espelho', text:'Números iguais criam reconhecimento imediato — vocês se entendem quase sem precisar explicar. O risco é reforçarem os mesmos defeitos um do outro em vez de se equilibrarem.' };
+  }
+  const groupA = NUMBER_GROUPS[numA], groupB = NUMBER_GROUPS[numB];
+  if(groupA === groupB){
+    return { score:'Fluxo natural', text:'Vocês pertencem à mesma "família" de números — a energia flui com menos atrito, existe uma sintonia natural na forma de ver o mundo.' };
+  }
+  return { score:'Opostos que ensinam', text:'Vocês vêm de energias bem diferentes — o que pode gerar tanto atração quanto atrito. É a combinação clássica de "opostos que se atraem": rende crescimento, mas exige mais escuta dos dois lados.' };
+}
+function renderCompatResult(personA, personB){
+  document.getElementById('compat-num-a').textContent = personA.life;
+  document.getElementById('compat-num-b').textContent = personB.life;
+  const result = compatibilityText(personA.life, personB.life);
+  document.getElementById('compat-score').textContent = result.score;
+  document.getElementById('compat-text').textContent = result.text;
+}
+
+/* ================= DASHBOARD / NÚMERO DO DIA ================= */
+const PERSONAL_DAY_TEXT = {
+  1:'Dia de iniciar. Se tem algo travado esperando você começar, hoje é o dia de dar o primeiro passo.',
+  2:'Dia de cooperar e ouvir. Evite forçar decisões sozinho hoje — parceria rende mais que ação solo.',
+  3:'Dia de se expressar. Fale, escreva, poste, cante — o que estiver preso pra sair, hoje flui mais fácil.',
+  4:'Dia de organizar. Coloca ordem no que está bagunçado — tarefa chata hoje evita dor de cabeça amanhã.',
+  5:'Dia de mudança. Algo imprevisto pode aparecer — em vez de resistir, aproveita o movimento.',
+  6:'Dia de cuidar. Casa, família, alguém próximo pode precisar de você hoje — presta atenção nos sinais.',
+  7:'Dia de recolher. Sua energia pede introspecção — não force interação social se não estiver a fim.',
+  8:'Dia de agir com foco em resultado. Boa data pra decisões financeiras ou profissionais importantes.',
+  9:'Dia de soltar. Algo que já cumpriu seu ciclo pede pra ser encerrado — resistir só prolonga o desconforto.'
+};
+function renderDashboard(){
+  const today = new Date();
+  const py = calcPersonalYear(currentPerson.data, today);
+  const pd = calcPersonalDay(py, today);
+  const displayNum = MASTER_NUMBERS.includes(pd) ? pd : reduceNumber(pd);
+  const safeNum = PERSONAL_DAY_TEXT[displayNum] ? displayNum : reduceNumber(displayNum > 9 ? displayNum : displayNum);
+  document.getElementById('day-orb').textContent = displayNum;
+  document.getElementById('dash-title').textContent = 'Seu número pessoal hoje é ' + displayNum;
+  document.getElementById('dash-text').textContent = PERSONAL_DAY_TEXT[safeNum] || PERSONAL_DAY_TEXT[reduceNumber(displayNum)];
+}
+
+/* ================= INIT ================= */
+/* ================= PAINEL DO NUMERÓLOGO (B2B2C) ================= */
+let proPlan = null; // 'basico' | 'pro' | null
+
+async function goToProArea(){
+  const active = await checkExistingProSubscription();
+  if(active){ openProGenerator(); } else { goTo('screen-pro-landing'); }
+}
+
+async function subscribePro(plano){
+  try{
+    const res = await fetch('/api/create-checkout-session', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ plano: plano })
+    });
+    const data = await res.json();
+    if(data.url){ window.location.href = data.url; }
+    else{ throw new Error(data.error || 'erro no checkout'); }
+  }catch(e){
+    alert('Não foi possível iniciar o pagamento agora. Tenta de novo em instantes.');
+  }
+}
+
+async function checkExistingProSubscription(){
+  const subId = localStorage.getItem('numerologia_pro_subscription_id');
+  if(!subId){ return false; }
+  try{
+    const res = await fetch(`/api/check-subscription?subscription_id=${encodeURIComponent(subId)}`);
+    const data = await res.json();
+    if(!data.active){ localStorage.removeItem('numerologia_pro_subscription_id'); localStorage.removeItem('numerologia_pro_plano'); return false; }
+    proPlan = localStorage.getItem('numerologia_pro_plano') || 'basico';
+    return true;
+  }catch(e){ return false; }
+}
+
+async function handleProPaymentReturn(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('paid_pro') === '1' && params.get('session_id')){
+    try{
+      const res = await fetch(`/api/verify-session?session_id=${encodeURIComponent(params.get('session_id'))}`);
+      const data = await res.json();
+      window.history.replaceState({}, '', window.location.pathname);
+      if(data.active && data.subscriptionId){
+        localStorage.setItem('numerologia_pro_subscription_id', data.subscriptionId);
+        localStorage.setItem('numerologia_pro_plano', data.plano || 'basico');
+        proPlan = data.plano || 'basico';
+        openProGenerator();
+      }
+    }catch(e){}
+  }
+}
+
+function openProGenerator(){
+  document.getElementById('pro-plan-label').textContent = 'Painel Profissional · Plano ' + (proPlan === 'pro' ? 'Pro' : 'Básico');
+  document.getElementById('pro-brand-row').style.display = proPlan === 'pro' ? 'block' : 'none';
+  const savedBrand = localStorage.getItem('numerologia_pro_brand');
+  if(savedBrand){ document.getElementById('pro-brand-name').value = savedBrand; }
+  updateProUsageNote();
+  goTo('screen-pro-generator');
+}
+
+function getProUsageThisMonth(){
+  const key = 'numerologia_pro_usage_' + new Date().getFullYear() + '-' + (new Date().getMonth()+1);
+  return parseInt(localStorage.getItem(key) || '0', 10);
+}
+function incrementProUsage(){
+  const key = 'numerologia_pro_usage_' + new Date().getFullYear() + '-' + (new Date().getMonth()+1);
+  localStorage.setItem(key, String(getProUsageThisMonth() + 1));
+}
+function updateProUsageNote(){
+  const note = document.getElementById('pro-usage-note');
+  if(proPlan === 'pro'){
+    note.textContent = 'Plano Pro: mapas ilimitados.';
+  } else {
+    const used = getProUsageThisMonth();
+    note.textContent = `Plano Básico: ${used} de 10 mapas usados esse mês.`;
+  }
+}
+
+function generateProMap(){
+  const nome = document.getElementById('pro-input-nome').value.trim();
+  const data = document.getElementById('pro-input-data').value;
+  if(!nome || !data){ alert('Preenche o nome completo e a data de nascimento do cliente.'); return; }
+  if(proPlan === 'basico' && getProUsageThisMonth() >= 10){
+    alert('Você atingiu o limite de 10 mapas do plano Básico esse mês. Faça upgrade pro Pro pra gerar sem limite.');
+    return;
+  }
+  if(proPlan === 'pro'){
+    const brand = document.getElementById('pro-brand-name').value.trim();
+    if(brand){ localStorage.setItem('numerologia_pro_brand', brand); }
+  }
+  incrementProUsage();
+  updateProUsageNote();
+
+  const person = computePerson(nome, data);
+  const karmic = calcKarmicLessons(nome);
+  const realizacao = calcRealizacao(person.life, person.destiny);
+  const desejoOculto = calcDesejoOculto(nome);
+  const desafios = calcDesafios(data);
+  const pinnacles = calcPinnacles(data, person.life);
+  const brandName = proPlan === 'pro' ? (document.getElementById('pro-brand-name').value.trim() || localStorage.getItem('numerologia_pro_brand')) : null;
+
+  const out = document.getElementById('pro-map-output');
+  out.innerHTML = `
+    ${brandName ? `<div class="center" style="margin-bottom:16px; color:var(--accent); font-family:'Fraunces',serif; font-size:15px;">${brandName}</div>` : ''}
+    <div class="overview-card"><div class="oveyebrow">Visão geral</div><p>${buildOverview(person)}</p></div>
+    <div class="numbers-grid">
+      <div class="number-card"><div class="num">${person.life}</div><div class="label">Caminho de Vida</div></div>
+      <div class="number-card"><div class="num">${person.destiny}</div><div class="label">Destino</div></div>
+      <div class="number-card"><div class="num">${person.soul}</div><div class="label">Alma</div></div>
+      <div class="number-card"><div class="num">${person.personality}</div><div class="label">Personalidade</div></div>
+    </div>
+    <div class="interp-card"><div class="ihead"><span class="ititle">Número de Realização (${realizacao})</span></div><p>${REALIZACAO_TEXT[realizacao]}</p></div>
+    <div class="interp-card"><div class="ihead"><span class="ititle">Desejo Oculto (${desejoOculto})</span></div><p>${DESEJO_OCULTO_TEXT[desejoOculto] || ''}</p></div>
+    <div class="interp-card"><div class="ihead"><span class="ititle">Lições Cármicas</span></div><p>${karmic.length ? karmic.map(n=>KARMIC_TEXT[n]).join(' ') : 'Nenhuma letra ausente relevante identificada no nome — sem lição cármica marcante por essa via.'}</p></div>
+    <div class="interp-card"><div class="ihead"><span class="ititle">Momentos Decisivos</span></div>
+      <p><b>1º ciclo (até ${pinnacles.firstEnd}):</b> ${pinnacles.p1} — ${PINNACLE_TEXT[pinnacles.p1]}</p>
+      <p style="margin-top:10px;"><b>2º ciclo (${pinnacles.firstEnd}-${pinnacles.secondEnd}):</b> ${pinnacles.p2} — ${PINNACLE_TEXT[pinnacles.p2]}</p>
+      <p style="margin-top:10px;"><b>3º ciclo (${pinnacles.secondEnd}-${pinnacles.thirdEnd}):</b> ${pinnacles.p3} — ${PINNACLE_TEXT[pinnacles.p3]}</p>
+      <p style="margin-top:10px;"><b>4º ciclo (a partir dos ${pinnacles.thirdEnd}):</b> ${pinnacles.p4} — ${PINNACLE_TEXT[pinnacles.p4]}</p>
+    </div>
+    <div class="interp-card"><div class="ihead"><span class="ititle">Números de Desafio</span></div>
+      <p>${DESAFIO_TEXT[desafios.d1]}</p>
+      <p style="margin-top:10px;">${DESAFIO_TEXT[desafios.d2]}</p>
+      <p style="margin-top:10px;">${DESAFIO_TEXT[desafios.d3]}</p>
+      <p style="margin-top:10px;">${DESAFIO_TEXT[desafios.d4]}</p>
+    </div>
+    <p class="center" style="color:var(--text-dim); font-size:12px; margin-top:10px;">Use Cmd/Ctrl+P pra salvar esse mapa em PDF.</p>
+  `;
+  out.scrollIntoView({ behavior:'smooth' });
+}
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  const params = new URLSearchParams(window.location.search);
+
+  if(params.get('paid_pro') === '1'){
+    await handleProPaymentReturn();
+    return;
+  }
+  const proActive = await checkExistingProSubscription();
+  if(proActive && params.get('painel') === '1'){
+    openProGenerator();
+    return;
+  }
+
+  if(params.get('convite')){
+    const decoded = shareDecode(params.get('convite'));
+    if(decoded){
+      compatInviter = computePerson(decoded.nome, decoded.data);
+      document.getElementById('compat-second-title').textContent = decoded.nome.split(' ')[0] + ' quer saber se combina com você.';
+      goTo('screen-compat-second');
+      return;
+    }
+  }
+  if(params.get('ver')){
+    const decoded = shareDecode(params.get('ver'));
+    if(decoded){
+      currentPerson = computePerson(decoded.nome, decoded.data);
+      renderResult();
+      goTo('screen-result');
+      return;
+    }
+  }
+
+  try{
+    const saved = localStorage.getItem('numerologia_person');
+    const leadCaptured = localStorage.getItem('numerologia_lead_captured');
+    if(saved){
+      currentPerson = JSON.parse(saved);
+      if(leadCaptured === '1'){
+        renderDashboard();
+        goTo('screen-dashboard');
+      }
+    }
+  }catch(e){}
+});
+
+// preenche o cartão de compartilhamento sempre que a tela é ativada
+const shareObserver = new MutationObserver(()=>{
+  const el = document.getElementById('screen-share');
+  if(el && el.classList.contains('active') && currentPerson){ fillShareScreen(); }
+});
+shareObserver.observe(document.getElementById('screen-share'), { attributes:true, attributeFilter:['class'] });
+</script>
+</body>
+</html>
